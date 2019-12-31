@@ -1,0 +1,110 @@
+:root {
+  --bckgrnd: #2F4F4F ;
+  --container: #2F4F4F ;
+
+  /*text colors*/  
+  --text: #ffffff;
+  --black: #839496;
+  --negative: #fdf6e3;
+
+  /*row colors*/  
+  --row0: #a2a3a1;
+}
+
+
+@font-face {
+font-family: 'Apercu';
+src: url('fonts/apercu-mono-regular.ttf');
+}
+
+@font-face {
+font-family: 'DDCHardware';
+src: url('fonts/DDCHardware-Regular.otf');  	
+}
+
+@font-face {
+font-family: 'Duospace';
+src: url('fonts/iAWriterDuospace-Regular.otf');  	
+}
+body {
+font-family:'Duospace', 'Apercu', monospace;
+background-color: var(--bckgrnd);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0; height: 100vh; overflow: hidden;
+}
+
+a {
+      text-decoration: none;  
+}
+
+
+  input:focus {
+    margin: 0;
+    border: 0;
+    outline: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+
+  input {
+  border: none;
+  padding: 0;
+  text-align: left;
+  background-color: inherit;
+  color: inherit;
+  font:inherit;
+  line-height: 1em;
+  
+  }
+
+/*This our grid container for our links*/
+.container {
+  background: var(--container);
+  padding: 2.5em;
+  display: grid;
+/*  grid-template-columns: repeat(6, 1fr);*/
+/*  grid-template-rows: repeat(4, 1em 2.5em) 2.5em; */
+ grid-template-columns: auto;
+ grid-template-rows: auto;
+ grid-gap: 2.5em;
+}
+
+.link{
+  color: inherit;
+  line-height: 2.5em;
+  text-align: center;
+  font-size: 1em;
+  padding: 0 0.25em 0 0.25em;
+  transition: ease-in-out 0.085s;
+}
+
+.name {
+  color: var(--text);
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0;
+  grid-column: 2 / 2;
+  line-height: 1em;
+}
+
+.school { 
+  color: var(--text);
+  font-size: 1.25em;
+  font-weight: bold;
+  margin: 0;
+  grid-column: 2 / 2;
+  text-align:center;
+  grid-row: 2/2;
+  line-height: 1em;
+}
+
+
+.row0 {
+  color: var(--text); 
+  grid-row: 3 / 3; 
+  grid-column-: 2/2;
+}
+
+
