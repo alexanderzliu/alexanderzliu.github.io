@@ -87,6 +87,8 @@ a {
   margin: 0;
   grid-column: 2 / 2;
   line-height: 1em;
+  text-align:center;
+
 }
 
 .school { 
@@ -96,14 +98,27 @@ a {
   margin: 0;
   grid-column: 2 / 2;
   text-align:center;
-  grid-row: 2/2;
+  grid-row: 3 / 3;
+  line-height: 1em;
+}
+
+.work { 
+  color: var(--text);
+  font-size: 1.25em;
+  font-weight: bold;
+  margin: 0;
+  grid-column: 2 / 2;
+  text-align:center;
+  grid-row: 2 / 2;
   line-height: 1em;
 }
 
 
+
+
 .row0 {
   color: var(--text); 
-  grid-row: 3 / 3; 
+  grid-row: 4 / 4; 
   grid-column-: 2/2;
 }
 
