@@ -1,0 +1,11 @@
+---
+title: "Welcome To My Blog ^_^"
+author: "Alexander Liu"
+date: "2023-10-08"
+categories: [Bubu, Dudu,]
+image: bubu_dudu.jpeg
+---
+
+This is the first post in my Deep Learning blog. Enjoy these pictures of adorable bears in love. How long can the snippet of a blog be.
+
+![](bubu_dudu.jpeg)

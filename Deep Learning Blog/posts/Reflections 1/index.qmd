@@ -1,0 +1,18 @@
+---
+title: "Reflections: Starting Off Right"
+author: "Alexander Liu"
+date: "2023-10-23"
+categories: [Reflections]
+---
+As I'm creating this blog to document my adventures in learning deep learning I realize that now I have the perfect medium (haha get IT?) to share my thoughts on whatever I want, and there's literally nothing anybody can do about it. So let me start facting: 
+
+EPIC QUOTE ALERT: "If you don't have time to do it right, when will you have time to do it over?"
+
+I am a fan of progression, of move towards a goal. Or at least the illusion of it. Maybe even at the expense of any positive outcomes that would result from actually working towards that goal. I used to play RuneScape, so an arbitrary number ticking upwards towards another completely arbitrary threshold appealed to me. 
+For learning, this manifests as a eagerness to move onto the next lesson after I've 'finished' going through all the material, but in no way having absorbed it all. I'm well aware of this now, my goal isn't to watch a bunch of lectures, or scroll through a bunch of code cells, but to actual learn deeply. So this blog is my way of slowing down while going through these lessons (focusing on fast.ai's Practical Deep Learning for Coders atm)to better digest the material by translating it into my own thoughts and the way that I undertand it. It'll also guarantee that I have something to show for along the way. This is my way of doing things right. 
+
+I figured it would be a good excercise in communication to write posts that weren't strictly associated with a particular deep learning lesson. It's actually a problem for me - I take so long at work writing emails that I know people won't even look twice at. I think if I just got better at starting and completing a thought through writing in a timely and straightforward manner, I could literally multiply my productive. I've rewritten the last sentence like 4 times and you probably didn't even read it, so this seems like a productive goal to work towards.
+
+Honestly, I thought it would be a cool to have a kind of humorous iteration of deep learning lessons, but aside from occasionally being mildly sarcastic being funny is way harder than I thought it would be. I'm literally too focused on gradients and layers and loss functions and all this other crap I don't have the mental capacity to dedicate to wit. Anyway, that's all the writing I have to bless you with for now. Stay tuned for more mind-melting musings and profound quotes - like this one: 
+
+"bebi" - my gf
