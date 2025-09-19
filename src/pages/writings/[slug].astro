@@ -3,7 +3,7 @@ import Base from "../../layouts/Base.astro";
 import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
+  const posts = await getCollection("writings");
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: { post },
@@ -14,12 +14,12 @@ const { post } = Astro.props;
 const { Content } = await post.render();
 ---
 <Base title={`${post.data.title} — Alexander Liu`} description={post.data.description ?? ''}>
+  <nav class="links" aria-label="Post">
+    <a class="link" href="/" transition:animate>← Home</a>
+    <a class="link" href="/writings" transition:animate>← Writings</a>
+  </nav>
   <article class="prose">
     <h1 class="name">{post.data.title}</h1>
     <Content />
   </article>
-  <nav class="links" aria-label="Post">
-    <a class="link" href="/blog" transition:animate>← Back to Blog</a>
-  </nav>
 </Base>
-
