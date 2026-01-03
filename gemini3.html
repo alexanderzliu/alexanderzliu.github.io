@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UNTITLED_PROJECT_FINAL_V2.html</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Rubik+Glitch&display=swap');
+
+        :root {
+            --bg: #ff0055; /* Hot Pink */
+            --window-bg: #ffffff;
+            --text: #000000;
+            --accent: #ccff00; /* Acid Green */
+            --border: 4px solid #000;
+            --shadow: 8px 8px 0px #000;
+        }
+
+        * { box-sizing: border-box; cursor: default; user-select: none; }
+
+        body {
+            margin: 0;
+            overflow: hidden; /* No scroll bars, it's a canvas */
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(#000 15%, transparent 16%),
+                radial-gradient(#000 15%, transparent 16%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            font-family: 'Space Mono', monospace;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* CHAOS CURSOR */
+        #cursor-trail {
+            position: absolute;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            color: white;
+            font-size: 24px;
+        }
+
+        /* MARQUEE BANNER */
+        .marquee-container {
+            position: fixed;
+            top: 20px;
+            left: -10%;
+            width: 120%;
+            background: var(--accent);
+            border-top: var(--border);
+            border-bottom: var(--border);
+            transform: rotate(-2deg);
+            z-index: 0;
+            padding: 10px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            animation: scroll 10s linear infinite;
+            font-weight: bold;
+            font-size: 2rem;
+            color: black;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* DRAGGABLE WINDOWS */
+        .window {
+            position: absolute;
+            background: var(--window-bg);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            padding: 0;
+            width: 400px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.1s;
+            z-index: 10;
+        }
+
+        .window:active {
+            box-shadow: 2px 2px 0px #000;
+            transform: translate(6px, 6px);
+            z-index: 100; /* Bring to front */
+        }
+
+        .bar {
+            background: black;
+            color: white;
+            padding: 8px;
+            font-weight: bold;
+            cursor: grab;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bar:active { cursor: grabbing; }
+
+        .btn-close {
+            width: 15px; height: 15px;
+            background: #ff0055;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .content {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        /* SPECIFIC STYLES */
+        h1 {
+            font-family: 'Rubik Glitch', cursive;
+            font-size: 3rem;
+            line-height: 1;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .tag {
+            background: black;
+            color: var(--accent);
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* TERMINAL STYLE FOR PROMPT */
+        #prompt-window {
+            background: #1a1a1a;
+            color: #0f0;
+            width: 500px;
+        }
+        #prompt-window .bar { background: #333; color: #ccc; }
+        #prompt-window .content { font-size: 0.8rem; line-height: 1.4; }
+
+        /* HERO WINDOW */
+        #hero-window {
+            top: 20%;
+            left: 10%;
+            width: 450px;
+            background: var(--accent);
+        }
+
+        /* SKILLS WINDOW */
+        #skills-window {
+            top: 50%;
+            left: 60%;
+            background: white;
+            border: 4px solid blue;
+            box-shadow: 8px 8px 0px blue;
+        }
+
+        button.chaos-btn {
+            background: black;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button.chaos-btn:hover {
+            background: #ff0055;
+            transform: scale(1.1) rotate(-3deg);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="marquee-container">
+        <div class="marquee-content">
+            ⚠ AI GENERATED CONTENT ⚠ HUMAN SUPERVISION NOT FOUND ⚠ PROMPT INJECTION SUCCESSFUL ⚠ VISUALLY APPEALING BUT EMOTIONALLY DISTANT ⚠ &nbsp;
+            ⚠ AI GENERATED CONTENT ⚠ HUMAN SUPERVISION NOT FOUND ⚠ PROMPT INJECTION SUCCESSFUL ⚠ VISUALLY APPEALING BUT EMOTIONALLY DISTANT ⚠ &nbsp;
+        </div>
+    </div>
+
+    <div class="window" id="hero-window" data-vx="2" data-vy="1">
+        <div class="bar">
+            <span>> WHO_AM_I.exe</span>
+            <div class="btn-close"></div>
+        </div>
+        <div class="content">
+            <span class="tag">AI ENGINEER / CHAOS AGENT</span>
+            <h1>I Prompt, Therefore I Break Things.</h1>
+            <p>Most AI engineers use LLMs to optimize workflows. I use them to create digital brutality.</p>
+            <p>Drag these windows. Throw them. They have physics. Why? Because a static website is a boring website.</p>
+            <button class="chaos-btn" onclick="scramble()">⚠ DO NOT CLICK</button>
+        </div>
+    </div>
+
+    <div class="window" id="prompt-window" data-vx="-1.5" data-vy="2">
+        <div class="bar">
+            <span>root@server:~/source_code</span>
+            <div class="btn-close"></div>
+        </div>
+        <div class="content">
+            <p style="opacity: 0.7">// THE GENESIS PROMPT</p>
+            <p id="typewriter"></p>
+            <span style="animation: blink 1s infinite">█</span>
+        </div>
+    </div>
+
+    <div class="window" id="skills-window" data-vx="3" data-vy="-1">
+        <div class="bar">
+            <span>SKILL_MATRIX.json</span>
+            <div class="btn-close"></div>
+        </div>
+        <div class="content">
+            <h3>Capabilities:</h3>
+            <ul style="list-style: square;">
+                <li><strong>LLM Integration:</strong> Making robots talk good.</li>
+                <li><strong>Python:</strong> Spaghetti code that works.</li>
+                <li><strong>Web Design:</strong> Evidently questionable.</li>
+                <li><strong>Prompt Engineering:</strong> I wrote the text you are reading right now.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="cursor-trail"></div>
+
+    <script>
+        // --- 1. THE TYPEWRITER (The Content) ---
+        const promptText = `> SYSTEM DIRECTIVE:
+"Create a personal website... visually appealing... impressive graphics... tasteful animations... tongue-in-cheek... highlight the creativity that AI can help manifest..."
+
+> ERROR: 'Tasteful' not found in library. 
+> EXECUTING: Chaotic_Good_Protocol.v2
+> RENDER_COMPLETE.`;
+
+        let i = 0;
+        const typeDest = document.getElementById('typewriter');
+        function typeWriter() {
+            if (i < promptText.length) {
+                typeDest.textContent += promptText.charAt(i);
+                i++;
+                setTimeout(typeWriter, 30);
+            }
+        }
+        setTimeout(typeWriter, 1000);
+
+
+        // --- 2. PHYSICS ENGINE (The Chaos) ---
+	        const windows = document.querySelectorAll('.window');
+	        let bounds = { w: window.innerWidth, h: window.innerHeight };
+	        let isDragging = false;
+	        let dragTarget = null;
+	        let offset = { x: 0, y: 0 };
+	        let physicsStarted = false;
+
+	        // Initialize positions
+	        windows.forEach(win => {
+	            const parsedVx = Number.parseFloat(win.dataset.vx);
+	            const parsedVy = Number.parseFloat(win.dataset.vy);
+	            win.initialVx = Number.isFinite(parsedVx) ? parsedVx + (Math.random() - 0.5) : (Math.random() - 0.5) * 4;
+	            win.initialVy = Number.isFinite(parsedVy) ? parsedVy + (Math.random() - 0.5) : (Math.random() - 0.5) * 4;
+	            win.vx = 0;
+	            win.vy = 0;
+	            win.x = win.offsetLeft;
+	            win.y = win.offsetTop;
+	        });
+
+	        function startPhysics() {
+	            if (physicsStarted) return;
+	            physicsStarted = true;
+
+	            windows.forEach(win => {
+	                win.x = win.offsetLeft;
+	                win.y = win.offsetTop;
+	                if (win.vx === 0 && win.vy === 0) {
+	                    win.vx = win.initialVx;
+	                    win.vy = win.initialVy;
+	                }
+	            });
+
+	            requestAnimationFrame(updatePhysics);
+	        }
+
+	        function updatePhysics() {
+	            if (isDragging) {
+	                requestAnimationFrame(updatePhysics);
+	                return;
+	            }
+
+	            windows.forEach(win => {
+	                if (win === dragTarget) return;
+
+                // Move
+                win.x += win.vx;
+                win.y += win.vy;
+
+                // Bounce X
+                if (win.x <= 0 || win.x + win.offsetWidth >= bounds.w) {
+                    win.vx *= -1;
+                    win.x = Math.max(0, Math.min(win.x, bounds.w - win.offsetWidth));
+                }
+
+                // Bounce Y
+                if (win.y <= 0 || win.y + win.offsetHeight >= bounds.h) {
+                    win.vy *= -1;
+                    win.y = Math.max(0, Math.min(win.y, bounds.h - win.offsetHeight));
+                }
+
+                // Apply
+                win.style.left = win.x + 'px';
+                win.style.top = win.y + 'px';
+	            });
+	            requestAnimationFrame(updatePhysics);
+	        }
+
+	        // Window Resize Handling
+	        window.addEventListener('resize', () => {
+	            bounds = { w: window.innerWidth, h: window.innerHeight };
+        });
+
+
+        // --- 3. DRAG AND THROW LOGIC ---
+        // Mouse Down
+        windows.forEach(win => {
+            const bar = win.querySelector('.bar');
+            bar.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                dragTarget = win;
+                // Calculate offset relative to the window
+                offset.x = e.clientX - win.getBoundingClientRect().left;
+                offset.y = e.clientY - win.getBoundingClientRect().top;
+                
+                // Stop momentum while dragging
+                win.vx = 0;
+                win.vy = 0;
+                
+                // Bring to front
+                windows.forEach(w => w.style.zIndex = 10);
+                win.style.zIndex = 100;
+            });
+        });
+
+        // Mouse Up (Throwing logic)
+        let lastX = 0, lastY = 0;
+        let speedX = 0, speedY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            // Update cursor trail
+            const trail = document.getElementById('cursor-trail');
+            trail.style.left = e.clientX + 10 + 'px';
+            trail.style.top = e.clientY + 10 + 'px';
+            trail.innerText = `<div x="${e.clientX}" y="${e.clientY}">`;
+
+            // Dragging Logic
+            if (isDragging && dragTarget) {
+                // Calculate speed for throwing
+                speedX = e.clientX - lastX;
+                speedY = e.clientY - lastY;
+                lastX = e.clientX;
+                lastY = e.clientY;
+
+                dragTarget.x = e.clientX - offset.x;
+                dragTarget.y = e.clientY - offset.y;
+                dragTarget.style.left = dragTarget.x + 'px';
+                dragTarget.style.top = dragTarget.y + 'px';
+            }
+        });
+
+	        document.addEventListener('mouseup', () => {
+	            if (isDragging && dragTarget) {
+	                // Apply throwing velocity
+	                dragTarget.vx = speedX * 0.5; // Friction/Weight
+	                dragTarget.vy = speedY * 0.5;
+	                isDragging = false;
+	                dragTarget = null;
+	                startPhysics();
+	            }
+	        });
+
+
+        // --- 4. THE CHAOS BUTTON ---
+	        function scramble() {
+	            startPhysics();
+	            const colors = ['#ff0055', '#ccff00', '#0099ff', '#ffffff'];
+	            document.body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            windows.forEach(win => {
+                win.vx = (Math.random() - 0.5) * 20; // High speed
+                win.vy = (Math.random() - 0.5) * 20;
+                win.style.transform = `rotate(${Math.random() * 360}deg)`;
+            });
+
+            // Change font randomly
+            const fonts = ['Courier New', 'Arial', 'Times New Roman', 'Impact'];
+            document.body.style.fontFamily = fonts[Math.floor(Math.random() * fonts.length)];
+        }
+
+    </script>
+</body>
+</html>

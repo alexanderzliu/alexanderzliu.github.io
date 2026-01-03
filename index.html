@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DESIGN_CHAOS_SIMULATOR.html</title>
+    <style>
+        /* FONTS FOR DIFFERENT ERAS */
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Rubik+Glitch&family=Orbitron:wght@500&family=Poppins:wght@300;400;600;700&family=Abril+Fatface&display=swap');
+
+        :root {
+            --bg: #ff0055; /* Base Neo-Brutalist Background */
+            --accent: #ccff00;
+        }
+
+        * { box-sizing: border-box; cursor: default; user-select: none; }
+
+        html, body { height: 100%; }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: var(--bg);
+            /* Raw grid background */
+            background-image: linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px);
+            background-size: 50px 50px;
+            font-family: 'Space Mono', monospace;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* --- PHYSICS & BASE WINDOW LOGIC --- */
+        .window {
+            position: absolute;
+            min-width: 250px;
+            max-width: 350px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.1s; /* Smooth dragging */
+            z-index: 10;
+        }
+        
+        /* Drag handle area */
+        .handle {
+            cursor: grab;
+            padding: 10px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .handle:active { cursor: grabbing; }
+
+        .content {
+            padding: 15px;
+            flex-grow: 1;
+            font-size: 0.9rem;
+        }
+
+        /* --- STYLE 1: NEO-BRUTALIST (The Original) --- */
+        .style-brutalist {
+            background: var(--accent);
+            border: 4px solid #000;
+            box-shadow: 8px 8px 0px #000;
+            width: 450px;
+            min-width: 450px;
+            max-width: 450px;
+            color: #000;
+        }
+        .style-brutalist .handle {
+            background: #000;
+            color: #fff;
+            font-weight: bold;
+            padding: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-transform: none;
+        }
+        .style-brutalist .btn-close { width: 15px; height: 15px; background: #ff0055; border-radius: 50%; border: 2px solid white;}
+        .style-brutalist .content { padding: 20px; overflow-y: auto; }
+        .style-brutalist h1 {
+            font-family: 'Rubik Glitch', cursive;
+            font-size: 3rem;
+            line-height: 1;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        .style-brutalist .tag {
+            background: #000;
+            color: var(--accent);
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        button.chaos-btn {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button.chaos-btn:hover {
+            background: #ff0055;
+            transform: scale(1.1) rotate(-3deg);
+        }
+
+        /* --- STYLE 3: BAUHAUS (Geometric/Modernist) --- */
+        .style-bauhaus {
+            --bau-paper: #f6f1e4;
+            --bau-black: #111111;
+            --bau-red: #d62828;
+            --bau-blue: #0047ab;
+            --bau-yellow: #f4d35e;
+
+            background: var(--bau-paper);
+            color: var(--bau-black);
+            border: 4px solid var(--bau-black);
+            border-radius: 0;
+            box-shadow: 10px 10px 0 rgba(0, 71, 171, 0.9);
+            font-family: 'Poppins', 'Futura', 'Avenir Next', system-ui, sans-serif;
+        }
+        .style-bauhaus .handle {
+            position: relative;
+            background: var(--bau-paper);
+            color: var(--bau-black);
+            border-bottom: 4px solid var(--bau-black);
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            font-size: 0.72rem;
+            padding: 10px 12px 10px 94px;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+        .style-bauhaus .handle::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 64px;
+            background: linear-gradient(90deg, var(--bau-red) 0 33%, var(--bau-yellow) 33% 66%, var(--bau-blue) 66% 100%);
+            border-right: 4px solid var(--bau-black);
+        }
+        .style-bauhaus .bau-handle-year { margin-left: auto; font-weight: 700; letter-spacing: 0.22em; }
+        .style-bauhaus .content {
+            position: relative;
+            overflow: hidden;
+            padding: 18px 16px 16px 74px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.04), rgba(0,0,0,0.0));
+        }
+
+        .style-bauhaus .bau-text { position: relative; z-index: 2; }
+        .style-bauhaus .bau-kicker {
+            margin: 0 0 8px;
+            font-size: 0.68rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+        }
+        .style-bauhaus .bau-headline {
+            margin: 0;
+            font-size: 2.25rem;
+            line-height: 0.92;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+        }
+        .style-bauhaus .bau-amp { font-weight: 300; letter-spacing: 0.02em; }
+        .style-bauhaus .bau-body {
+            margin: 12px 0 0;
+            font-size: 0.85rem;
+            line-height: 1.35;
+            max-width: 22ch;
+        }
+        /* Geometric decorations */
+        .bau-circle {
+            position: absolute;
+            width: 98px;
+            height: 98px;
+            background: var(--bau-red);
+            border-radius: 50%;
+            border: 6px solid var(--bau-black);
+            bottom: -28px;
+            right: -28px;
+            opacity: 0.98;
+            z-index: 1;
+        }
+        .bau-rect {
+            position: absolute;
+            width: 42px;
+            height: 100%;
+            background: var(--bau-black);
+            top: 0;
+            left: 16px;
+            z-index: 1;
+        }
+        .bau-rect::after {
+            content: "";
+            position: absolute;
+            inset: 6px;
+            background: var(--bau-blue);
+        }
+        .bau-vertical {
+            position: absolute;
+            left: 26px;
+            top: 16px;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            color: var(--bau-paper);
+            font-weight: 700;
+            letter-spacing: 0.28em;
+            font-size: 0.65rem;
+            z-index: 2;
+        }
+        .bau-tri {
+            position: absolute;
+            width: 92px;
+            height: 80px;
+            background: var(--bau-black);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            top: 34px;
+            right: 26px;
+            transform: rotate(-8deg);
+            z-index: 1;
+        }
+        .bau-tri::after {
+            content: "";
+            position: absolute;
+            inset: 6px;
+            background: var(--bau-yellow);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+	        /* --- STYLE 4: RETRO FUTURISTIC (Synthwave) --- */
+	        .style-retro {
+	            --retro-ink: #050011;
+	            --retro-cyan: #00f5ff;
+	            --retro-magenta: #ff2bd6;
+	            --retro-glow: rgba(0, 245, 255, 0.55);
+	
+	            overflow: hidden;
+	            isolation: isolate;
+	
+	            border: 2px solid transparent;
+	            border-radius: 10px;
+		            background:
+		                radial-gradient(circle at 15% 18%, rgba(255, 43, 214, 0.16), transparent 38%) padding-box,
+		                radial-gradient(circle at 85% 80%, rgba(0, 245, 255, 0.14), transparent 40%) padding-box,
+		                linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 35%, rgba(0, 0, 0, 0.25) 100%) padding-box,
+		                linear-gradient(var(--retro-ink), var(--retro-ink)) padding-box,
+		                linear-gradient(90deg, rgba(0, 245, 255, 0.95), rgba(255, 43, 214, 0.9), rgba(0, 245, 255, 0.95)) border-box;
+	
+	            box-shadow:
+	                0 0 0 1px rgba(0, 245, 255, 0.35),
+	                0 0 18px var(--retro-glow),
+	                0 0 42px rgba(255, 43, 214, 0.22),
+	                inset 0 0 24px rgba(0, 245, 255, 0.14);
+	
+	            color: var(--retro-magenta);
+	            font-family: 'Orbitron', sans-serif;
+	        }
+	        .style-retro::before,
+	        .style-retro::after {
+	            content: "";
+	            position: absolute;
+	            inset: 0;
+	            pointer-events: none;
+	        }
+	        .style-retro::before {
+	            z-index: 2;
+	            background:
+	                radial-gradient(circle at 50% 0%, rgba(0, 245, 255, 0.18), transparent 55%),
+	                radial-gradient(circle at 50% 100%, rgba(255, 43, 214, 0.14), transparent 55%),
+	                repeating-linear-gradient(
+	                    180deg,
+	                    rgba(255, 255, 255, 0.06) 0px,
+	                    rgba(255, 255, 255, 0.06) 1px,
+	                    rgba(0, 0, 0, 0) 3px,
+	                    rgba(0, 0, 0, 0) 7px
+	                );
+	            background-position: 0 0, 0 0, 0 0;
+	            opacity: 0.32;
+	            mix-blend-mode: overlay;
+	            will-change: background-position;
+	            animation: retro-scanlines 10s linear infinite, retro-window-flicker 6.2s infinite;
+	        }
+	        .style-retro::after {
+	            z-index: 3;
+	            background:
+	                linear-gradient(90deg, rgba(0, 245, 255, 0.18), rgba(255, 43, 214, 0.18)),
+	                repeating-linear-gradient(
+	                    0deg,
+	                    rgba(255, 255, 255, 0.22) 0px,
+	                    rgba(255, 255, 255, 0.22) 2px,
+	                    rgba(255, 255, 255, 0) 2px,
+	                    rgba(255, 255, 255, 0) 11px
+	                );
+	            opacity: 0;
+	            mix-blend-mode: screen;
+	            filter: blur(0.2px);
+	            will-change: opacity, transform, clip-path;
+	            animation: retro-glitch-bars 7.5s infinite;
+	        }
+	        .style-retro .handle { 
+	            border-bottom: 1px solid rgba(0, 245, 255, 0.65); 
+	            text-shadow: 0 0 8px rgba(0, 245, 255, 0.55);
+	            background: linear-gradient(90deg, rgba(0, 245, 255, 0.14), rgba(255, 43, 214, 0.08));
+	            position: relative;
+	            z-index: 4;
+	        }
+	        .style-retro .handle span:first-child {
+	            position: relative;
+	            letter-spacing: 0.14em;
+	            animation: retro-text-jitter 6.5s infinite;
+	        }
+	        .style-retro .handle span:last-child {
+	            color: var(--retro-cyan);
+	            font-size: 0.72rem;
+	            letter-spacing: 0.12em;
+	            padding: 2px 8px;
+	            border: 1px solid rgba(0, 245, 255, 0.55);
+	            border-radius: 999px;
+	            background: rgba(0, 245, 255, 0.08);
+	            box-shadow: 0 0 14px rgba(0, 245, 255, 0.22);
+	        }
+	        .style-retro h3 {
+	            letter-spacing: 0.12em;
+	            text-shadow: 0 0 12px rgba(0, 245, 255, 0.35), 0 0 24px rgba(255, 43, 214, 0.18);
+	        }
+	        .style-retro p { color: #fff; text-shadow: 0 0 6px rgba(255, 255, 255, 0.55); }
+	        .style-retro .scanline {
+	            width: 100%;
+	            height: 2px;
+		            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+		            position: absolute;
+	            left: 0;
+	            top: 0;
+	            opacity: 0.75;
+	            box-shadow: 0 0 10px rgba(0, 245, 255, 0.35);
+	            mix-blend-mode: screen;
+	            will-change: top, opacity;
+	            animation: scan 3s linear infinite, retro-scan-flicker 1.2s steps(10) infinite;
+	            pointer-events: none;
+	            z-index: 5;
+	        }
+	        @keyframes scan { 0% {top:0;} 100% {top:100%;} }
+	        @keyframes retro-scanlines {
+	            0% { background-position: 0 0, 0 0, 0 0; }
+	            100% { background-position: 0 0, 0 0, 0 120px; }
+	        }
+	        @keyframes retro-scan-flicker {
+	            0%, 100% { opacity: 0.55; }
+	            50% { opacity: 0.85; }
+	        }
+	        @keyframes retro-window-flicker {
+	            0%, 100% { opacity: 0.32; }
+	            2% { opacity: 0.26; }
+	            3% { opacity: 0.36; }
+	            5% { opacity: 0.29; }
+	            8% { opacity: 0.35; }
+	            9% { opacity: 0.28; }
+	            10% { opacity: 0.32; }
+	            48% { opacity: 0.32; }
+	            49% { opacity: 0.24; }
+	            50% { opacity: 0.37; }
+	            51% { opacity: 0.3; }
+	            52% { opacity: 0.33; }
+	        }
+	        @keyframes retro-glitch-bars {
+	            0%, 100% { opacity: 0; transform: translate3d(0, 0, 0); clip-path: inset(0 0 0 0); }
+	            2% { opacity: 0.32; transform: translate3d(-8px, 0, 0); clip-path: inset(12% 0 78% 0); }
+	            2.4% { opacity: 0.18; transform: translate3d(10px, 0, 0); clip-path: inset(44% 0 42% 0); }
+	            2.8% { opacity: 0; }
+	            12% { opacity: 0.22; transform: translate3d(6px, 0, 0); clip-path: inset(30% 0 55% 0); }
+	            12.6% { opacity: 0.14; transform: translate3d(-9px, 0, 0); clip-path: inset(60% 0 25% 0); }
+	            13% { opacity: 0; }
+	            52% { opacity: 0; }
+	            53% { opacity: 0.28; transform: translate3d(7px, 0, 0); clip-path: inset(70% 0 14% 0); }
+	            53.6% { opacity: 0.2; transform: translate3d(-11px, 0, 0); clip-path: inset(25% 0 58% 0); }
+	            54.2% { opacity: 0; }
+	            78% { opacity: 0.18; transform: translate3d(9px, 0, 0); clip-path: inset(18% 0 72% 0); }
+	            78.4% { opacity: 0.12; transform: translate3d(-6px, 0, 0); clip-path: inset(50% 0 40% 0); }
+	            78.8% { opacity: 0; }
+	        }
+	        @keyframes retro-text-jitter {
+	            0%, 100% {
+	                transform: translateX(0);
+	                text-shadow:
+	                    -1px 0 rgba(0, 245, 255, 0.8),
+	                    1px 0 rgba(255, 43, 214, 0.75),
+	                    0 0 10px rgba(0, 245, 255, 0.35);
+	            }
+	            2% {
+	                transform: translateX(-1px);
+	                text-shadow:
+	                    -2px 0 rgba(0, 245, 255, 0.9),
+	                    2px 0 rgba(255, 43, 214, 0.85),
+	                    0 0 12px rgba(255, 43, 214, 0.3);
+	            }
+	            3% {
+	                transform: translateX(1px);
+	                text-shadow:
+	                    2px 0 rgba(0, 245, 255, 0.9),
+	                    -2px 0 rgba(255, 43, 214, 0.85),
+	                    0 0 12px rgba(0, 245, 255, 0.3);
+	            }
+	            4% { transform: translateX(0); }
+	            45% {
+	                transform: translateX(0);
+	                text-shadow:
+	                    -1px 0 rgba(0, 245, 255, 0.8),
+	                    1px 0 rgba(255, 43, 214, 0.75),
+	                    0 0 10px rgba(0, 245, 255, 0.35);
+	            }
+	            46% {
+	                transform: translateX(1px);
+	                text-shadow:
+	                    -3px 0 rgba(0, 245, 255, 0.85),
+	                    3px 0 rgba(255, 43, 214, 0.9),
+	                    0 0 12px rgba(255, 43, 214, 0.35);
+	            }
+	            47% { transform: translateX(0); }
+	        }
+
+        /* --- STYLE 5: GLASSMORPHISM (Windows Vista/Modern Web) --- */
+	        .style-glass {
+	            background: rgba(255, 255, 255, 0.25);
+	            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+	            backdrop-filter: blur(8px);
+	            -webkit-backdrop-filter: blur(8px);
+	            border-radius: 10px;
+	            border: 1px solid rgba(255, 255, 255, 0.18);
+	            color: white;
+	            font-family: 'Poppins', sans-serif;
+	        }
+	        .style-glass .handle { background: rgba(255,255,255,0.1); border-radius: 10px 10px 0 0; }
+	        .style-glass p { color: rgba(255,255,255,0.9); }
+	        .style-glass h3 {
+	            margin: 0 0 12px;
+	            text-transform: uppercase;
+	            letter-spacing: 0.08em;
+	            font-size: 0.95rem;
+	        }
+
+	        .style-glass .exp-timeline {
+	            --tl-col: 24px;
+	            --tl-line: rgba(255, 255, 255, 0.28);
+	            --tl-dot: rgba(255, 255, 255, 0.95);
+
+	            list-style: none;
+	            padding: 0;
+	            margin: 12px 0 0;
+	            position: relative;
+	            display: grid;
+	            gap: 14px;
+	        }
+	        .style-glass .exp-timeline::before {
+	            content: "";
+	            position: absolute;
+	            left: calc(var(--tl-col) / 2);
+	            top: 6px;
+	            bottom: 6px;
+	            width: 2px;
+	            transform: translateX(-1px);
+	            background: var(--tl-line);
+	            border-radius: 999px;
+	        }
+	        .style-glass .exp-timeline__item {
+	            display: grid;
+	            grid-template-columns: var(--tl-col) minmax(0, 1fr);
+	            gap: 12px;
+	            align-items: start;
+	        }
+	        .style-glass .exp-timeline__marker {
+	            display: grid;
+	            place-items: start center;
+	            padding-top: 4px;
+	            position: relative;
+	            z-index: 1;
+	        }
+	        .style-glass .exp-timeline__dot {
+	            width: 10px;
+	            height: 10px;
+	            border-radius: 999px;
+	            background: var(--tl-dot);
+	            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.14);
+	        }
+	        .style-glass .exp-timeline__card {
+	            padding: 10px 10px 9px;
+	            border-radius: 12px;
+	            border: 1px solid rgba(255, 255, 255, 0.18);
+	            background: rgba(255, 255, 255, 0.12);
+	            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+	        }
+	        .style-glass .exp-timeline__meta {
+	            display: flex;
+	            flex-wrap: wrap;
+	            gap: 6px 10px;
+	            align-items: baseline;
+	        }
+	        .style-glass .exp-timeline__range {
+	            font-size: 0.72rem;
+	            letter-spacing: 0.12em;
+	            text-transform: uppercase;
+	            padding: 2px 8px;
+	            border-radius: 999px;
+	            background: rgba(0, 0, 0, 0.25);
+	            border: 1px solid rgba(255, 255, 255, 0.22);
+	            color: rgba(255, 255, 255, 0.9);
+	            white-space: nowrap;
+	        }
+	        .style-glass .exp-timeline__role {
+	            font-weight: 600;
+	            color: rgba(255, 255, 255, 0.96);
+	        }
+	        .style-glass .exp-timeline__org {
+	            margin-top: 4px;
+	            font-size: 0.84rem;
+	            color: rgba(255, 255, 255, 0.88);
+	        }
+	        .style-glass .exp-timeline__desc {
+	            margin: 8px 0 0;
+	            line-height: 1.35;
+	            font-size: 0.86rem;
+	            color: rgba(255, 255, 255, 0.9);
+	        }
+	        .style-glass .exp-timeline__footer {
+	            margin-top: 12px;
+	            padding: 8px 10px;
+	            border-radius: 12px;
+	            background: rgba(255, 255, 255, 0.2);
+	            border: 1px solid rgba(255, 255, 255, 0.18);
+	            letter-spacing: 0.12em;
+	            text-transform: uppercase;
+	            font-size: 0.75rem;
+	            color: rgba(255, 255, 255, 0.9);
+	        }
+
+	        /* --- STYLE 6: NEUMORPHISM (Soft UI) --- */
+	        .style-neu {
+	            --neu-surface: #e7e8ee;
+            --neu-surface-hi: #f4f5fa;
+            --neu-shadow-dark: rgba(163, 177, 198, 0.55);
+            --neu-shadow-light: rgba(255, 255, 255, 0.9);
+            --neu-text: #1f2937;
+            --neu-muted: #667085;
+
+            background: radial-gradient(circle at 20% 15%, var(--neu-surface-hi), var(--neu-surface));
+            border-radius: 22px;
+            box-shadow: 16px 16px 32px var(--neu-shadow-dark), -16px -16px 32px var(--neu-shadow-light);
+            color: var(--neu-text);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            font-family: 'Poppins', sans-serif;
+        }
+        .style-neu .handle {
+            position: relative;
+            justify-content: center;
+            padding: 12px 14px;
+            border-radius: 22px 22px 0 0;
+            text-transform: none;
+            letter-spacing: 0.14em;
+            font-weight: 600;
+            font-size: 0.72rem;
+            color: var(--neu-muted);
+            box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.06);
+        }
+        .style-neu .handle * { cursor: inherit; }
+        .style-neu .content { padding: 16px; }
+
+        .neu-controls {
+            position: absolute;
+            left: 14px;
+            display: inline-flex;
+            gap: 7px;
+            align-items: center;
+        }
+        .neu-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--neu-surface);
+            box-shadow: inset 2px 2px 3px var(--neu-shadow-dark), inset -2px -2px 3px var(--neu-shadow-light);
+            opacity: 0.9;
+        }
+
+        .neu-kicker {
+            margin: 0 0 12px;
+            font-size: 0.85rem;
+            color: var(--neu-muted);
+            text-align: center;
+        }
+
+        .neu-links {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .neu-tile {
+            --tile-accent: #ff0055;
+            display: grid;
+            place-items: center;
+            gap: 10px;
+            padding: 14px 12px;
+            border-radius: 18px;
+            background: var(--neu-surface);
+            box-shadow: 8px 8px 16px var(--neu-shadow-dark), -8px -8px 16px var(--neu-shadow-light);
+            color: var(--neu-text);
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 150ms ease, box-shadow 150ms ease;
+        }
+        .neu-tile * { cursor: inherit; }
+        .neu-tile:hover {
+            transform: translateY(-1px);
+            box-shadow: 10px 10px 20px var(--neu-shadow-dark), -10px -10px 20px var(--neu-shadow-light);
+        }
+        .neu-tile:active {
+            transform: translateY(0);
+            box-shadow: inset 7px 7px 14px var(--neu-shadow-dark), inset -7px -7px 14px var(--neu-shadow-light);
+        }
+        .neu-tile:focus-visible {
+            outline: 2px solid var(--tile-accent);
+            outline-offset: 4px;
+        }
+
+        .neu-tile__icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            color: var(--tile-accent);
+            box-shadow: inset 5px 5px 10px var(--neu-shadow-dark), inset -5px -5px 10px var(--neu-shadow-light);
+        }
+        .neu-tile__label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.02em;
+        }
+        .neu-tile svg { width: 22px; height: 22px; }
+
+        .neu-tile--resume { --tile-accent: #ff0055; }
+        .neu-tile--github { --tile-accent: #111827; }
+        .neu-tile--linkedin { --tile-accent: #0a66c2; }
+        .neu-tile--email { --tile-accent: #b45309; }
+
+	        @media (prefers-reduced-motion: reduce) {
+	            .neu-tile { transition: none; }
+	            .neu-tile:hover { transform: none; }
+	        }
+
+	        /* --- STYLE 7: TERMINAL (Code/CLI) --- */
+	        .style-terminal {
+	            --term-border: rgba(204, 255, 0, 0.22);
+	            --term-fg: rgba(202, 255, 195, 0.95);
+	            --term-fg-dim: rgba(202, 255, 195, 0.7);
+	            --term-glow: rgba(93, 255, 135, 0.22);
+
+	            background-color: #050806;
+	            background-image:
+	                radial-gradient(900px 420px at 15% 0%, rgba(204, 255, 0, 0.16), transparent 60%),
+	                radial-gradient(700px 420px at 115% 0%, rgba(0, 255, 175, 0.1), transparent 62%),
+	                repeating-linear-gradient(
+	                    to bottom,
+	                    rgba(255, 255, 255, 0.035) 0px,
+	                    rgba(255, 255, 255, 0.035) 1px,
+	                    transparent 1px,
+	                    transparent 5px
+	                );
+	            border: 1px solid var(--term-border);
+	            border-radius: 14px;
+	            box-shadow:
+	                0 22px 70px rgba(0, 0, 0, 0.55),
+	                0 0 0 1px rgba(0, 0, 0, 0.6),
+	                0 0 28px rgba(204, 255, 0, 0.1);
+	            color: var(--term-fg);
+	            font-family: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+	            overflow: hidden;
+	        }
+
+	        .style-terminal .handle {
+	            display: grid;
+	            grid-template-columns: auto 1fr auto;
+	            align-items: center;
+	            gap: 10px;
+	            padding: 10px 12px;
+	            background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(0, 0, 0, 0.1));
+	            border-bottom: 1px solid rgba(204, 255, 0, 0.18);
+	            color: var(--term-fg-dim);
+	            font-size: 0.75rem;
+	            letter-spacing: 0.08em;
+	            text-transform: none;
+	        }
+	        .style-terminal .handle * { cursor: inherit; }
+
+	        .term-controls {
+	            display: inline-flex;
+	            gap: 7px;
+	            align-items: center;
+	        }
+	        .term-dot {
+	            width: 10px;
+	            height: 10px;
+	            border-radius: 999px;
+	            border: 1px solid rgba(0, 0, 0, 0.45);
+	            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+	        }
+	        .term-dot--close { background: #ff5f57; }
+	        .term-dot--min { background: #febc2e; }
+	        .term-dot--max { background: #28c840; }
+
+	        .term-title {
+	            justify-self: center;
+	            min-width: 0;
+	            white-space: nowrap;
+	            overflow: hidden;
+	            text-overflow: ellipsis;
+	            color: rgba(214, 255, 208, 0.85);
+	        }
+
+	        .term-status {
+	            justify-self: end;
+	            display: inline-flex;
+	            align-items: center;
+	            gap: 6px;
+	            font-size: 0.7rem;
+	            letter-spacing: 0.12em;
+	            text-transform: uppercase;
+	            color: rgba(214, 255, 208, 0.75);
+	        }
+	        .term-led {
+	            width: 7px;
+	            height: 7px;
+	            border-radius: 999px;
+	            background: var(--accent);
+	            box-shadow: 0 0 10px rgba(204, 255, 0, 0.35);
+	        }
+
+	        .style-terminal .content {
+	            padding: 12px 14px 14px;
+	            overflow: auto;
+	        }
+	        .style-terminal .content::-webkit-scrollbar { width: 10px; height: 10px; }
+	        .style-terminal .content::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.25); }
+	        .style-terminal .content::-webkit-scrollbar-thumb {
+	            background: rgba(204, 255, 0, 0.22);
+	            border: 2px solid rgba(5, 8, 6, 0.85);
+	            border-radius: 999px;
+	        }
+
+	        .term-output {
+	            margin: 0;
+	            white-space: pre;
+	            line-height: 1.5;
+	            font-size: 0.86rem;
+	            color: var(--term-fg);
+	            text-shadow: 0 0 12px var(--term-glow);
+	            user-select: text;
+	        }
+	        .term-output::after {
+	            content: "▋";
+	            display: inline-block;
+	            width: 0.7ch;
+	            margin-left: 0.15ch;
+	            color: rgba(204, 255, 0, 0.9);
+	            animation: term-blink 1s steps(1, end) infinite;
+	        }
+	        @keyframes term-blink {
+	            0%, 49% { opacity: 0; }
+	            50%, 100% { opacity: 1; }
+	        }
+	        @media (prefers-reduced-motion: reduce) {
+	            .term-output::after { animation: none; }
+	        }
+
+	        /* --- CHAOS ELEMENTS --- */
+	        #stage {
+	            position: relative;
+	            height: 100vh;
+            overflow: hidden;
+        }
+
+        #cursor-trail {
+            position: fixed; pointer-events: none; z-index: 9999;
+            background: yellow; color: black; padding: 2px 5px; font-size: 12px; font-weight: bold;
+            transition: opacity 180ms ease;
+        }
+        body.practice-footer-inview #cursor-trail { opacity: 0; }
+
+        /* --- PRACTICE FOOTER --- */
+        .practice-footer {
+            padding: 56px 16px 80px;
+        }
+
+        .practice-footer__inner {
+            max-width: 1040px;
+            margin: 0 auto;
+            border: 4px solid #000;
+            border-radius: 30px;
+            background: #fffdf1;
+            box-shadow: 12px 12px 0 #000;
+            padding: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .practice-footer__inner::before {
+            content: "";
+            position: absolute;
+            inset: -40px;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(255, 0, 85, 0.18) 0 10px, transparent 11px),
+                radial-gradient(circle at 72% 22%, rgba(0, 153, 255, 0.16) 0 12px, transparent 13px),
+                radial-gradient(circle at 82% 70%, rgba(204, 255, 0, 0.22) 0 12px, transparent 13px),
+                radial-gradient(circle at 30% 78%, rgba(0, 0, 0, 0.08) 0 10px, transparent 11px);
+            opacity: 0.9;
+            pointer-events: none;
+        }
+
+        .practice-footer__header {
+            position: relative;
+            display: grid;
+            gap: 6px;
+            padding: 4px 6px 16px;
+        }
+        .practice-footer__title {
+            margin: 0;
+            font-family: 'Abril Fatface', system-ui, sans-serif;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            font-size: clamp(1.6rem, 2.4vw, 2.3rem);
+        }
+        .practice-footer__subtitle {
+            margin: 0;
+            opacity: 0.78;
+            font-size: 0.98rem;
+        }
+
+        .practice-grid {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+        @media (max-width: 920px) {
+            .practice-grid { grid-template-columns: 1fr; }
+        }
+
+        .practice-panel {
+            background: #ffffff;
+            border: 3px solid #000;
+            border-radius: 22px;
+            box-shadow: 8px 8px 0 #000;
+            padding: 14px;
+            display: grid;
+            gap: 10px;
+            align-content: start;
+            min-height: 228px;
+        }
+        .practice-panel__title {
+            margin: 0;
+            font-size: 0.95rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .practice-bubble {
+            min-height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 10px;
+            border: 2px solid #000;
+            border-radius: 999px;
+            background: var(--accent);
+            width: fit-content;
+            max-width: 100%;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 140ms ease, transform 140ms ease;
+        }
+        .practice-bubble.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Singing */
+        .mic-control {
+            width: 100%;
+            border: 3px solid #000;
+            border-radius: 18px;
+            background: #ffe2f0;
+            box-shadow: 6px 6px 0 #000;
+            padding: 12px 12px;
+            display: grid;
+            grid-template-columns: 52px 1fr auto;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: transform 120ms ease, box-shadow 120ms ease;
+        }
+        .mic-control:active {
+            transform: translate(2px, 2px);
+            box-shadow: 4px 4px 0 #000;
+        }
+        .mic-control:focus-visible {
+            outline: 3px dashed #000;
+            outline-offset: 4px;
+        }
+        .mic-control__icon svg { width: 46px; height: 46px; display: block; }
+        .mic-control__prompt {
+            font-family: 'Orbitron', system-ui, sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 5px 10px;
+            border: 2px solid #000;
+            border-radius: 999px;
+            background: #fff;
+        }
+        .mic-meter {
+            height: 34px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            gap: 5px;
+        }
+        .mic-bar {
+            width: 6px;
+            height: 100%;
+            border-radius: 10px;
+            background: #000;
+            opacity: 0.55;
+            transform-origin: bottom;
+            transform: scaleY(0.25);
+        }
+        .practice-panel--mic.is-singing .mic-bar {
+            opacity: 1;
+            animation: micBar 620ms ease-in-out infinite;
+        }
+        .practice-panel--mic.is-singing .mic-bar:nth-child(2) { animation-duration: 540ms; animation-delay: -110ms; }
+        .practice-panel--mic.is-singing .mic-bar:nth-child(3) { animation-duration: 690ms; animation-delay: -70ms; }
+        .practice-panel--mic.is-singing .mic-bar:nth-child(4) { animation-duration: 510ms; animation-delay: -200ms; }
+        .practice-panel--mic.is-singing .mic-bar:nth-child(5) { animation-duration: 740ms; animation-delay: -140ms; }
+        .practice-panel--mic.is-singing .mic-bar:nth-child(6) { animation-duration: 560ms; animation-delay: -160ms; }
+        .practice-panel--mic.is-singing .mic-bar:nth-child(7) { animation-duration: 660ms; animation-delay: -90ms; }
+
+        @keyframes micBar {
+            0%, 100% { transform: scaleY(0.25); }
+            50% { transform: scaleY(1); }
+        }
+
+        /* Guitar */
+        .guitar-board {
+            position: relative;
+            height: 120px;
+            border: 3px solid #000;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #f8d7b6, #f2b47d);
+            box-shadow: inset 0 -10px 0 rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .guitar-frets {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(0, 0, 0, 0.18) 0 3px,
+                transparent 3px 34px
+            );
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        .guitar-frets::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 14px;
+            background: rgba(0,0,0,0.22);
+        }
+
+        .guitar-string {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 18px;
+            background: transparent;
+            border: 0;
+            padding: 0;
+            cursor: pointer;
+        }
+        .guitar-string::before {
+            content: "";
+            position: absolute;
+            left: 14px;
+            right: 12px;
+            top: 50%;
+            height: var(--string-thickness, 2px);
+            background: #000;
+            border-radius: 999px;
+            transform: translateY(-50%);
+            transform-origin: center;
+            opacity: 0.9;
+        }
+        .guitar-string:focus-visible {
+            outline: 3px dashed #000;
+            outline-offset: 4px;
+        }
+        .guitar-string.is-plucked::before {
+            animation: stringPluck 420ms ease-out;
+        }
+        @keyframes stringPluck {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            14% { transform: translateY(-50%) rotate(2deg); }
+            28% { transform: translateY(-50%) rotate(-2deg); }
+            42% { transform: translateY(-50%) rotate(1.4deg); }
+            56% { transform: translateY(-50%) rotate(-1.1deg); }
+            70% { transform: translateY(-50%) rotate(0.7deg); }
+            84% { transform: translateY(-50%) rotate(-0.4deg); }
+            100% { transform: translateY(-50%) rotate(0deg); }
+        }
+
+        .guitar-string--e2 { top: 10px; --string-thickness: 3.2px; }
+        .guitar-string--a2 { top: 28px; --string-thickness: 2.9px; }
+        .guitar-string--d3 { top: 46px; --string-thickness: 2.6px; }
+        .guitar-string--g3 { top: 64px; --string-thickness: 2.3px; }
+        .guitar-string--b3 { top: 82px; --string-thickness: 2.1px; }
+        .guitar-string--e4 { top: 100px; --string-thickness: 1.9px; }
+
+        .guitar-pick {
+            position: absolute;
+            right: 14px;
+            bottom: 10px;
+            width: 26px;
+            height: 30px;
+            border: 3px solid #000;
+            border-radius: 14px 14px 18px 18px;
+            transform: rotate(12deg);
+            background: #ccff00;
+            box-shadow: 3px 3px 0 #000;
+            pointer-events: none;
+            opacity: 0.88;
+        }
+        .guitar-board.is-strumming .guitar-pick {
+            animation: pickStrum 260ms ease-out;
+        }
+        @keyframes pickStrum {
+            0% { transform: rotate(12deg) translateY(0); }
+            50% { transform: rotate(8deg) translateY(6px); }
+            100% { transform: rotate(12deg) translateY(0); }
+        }
+
+        /* Muay Thai */
+        .thai-ring {
+            border: 3px solid #000;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #e6f7ff, #d2f4ff);
+            height: 120px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .thai-ring::before,
+        .thai-ring::after {
+            content: "";
+            position: absolute;
+            left: -10%;
+            right: -10%;
+            height: 8px;
+            border: 3px solid #000;
+            border-radius: 999px;
+            background: #fff;
+            opacity: 0.5;
+        }
+        .thai-ring::before { top: 16px; }
+        .thai-ring::after { bottom: 18px; }
+
+        .thai-fighter { width: 150px; }
+        .thai-fighter__svg { width: 100%; height: auto; display: block; }
+
+        .thai-fighter__arm,
+        .thai-fighter__leg,
+        .thai-fighter__bounce,
+        .thai-fighter__spark {
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        .thai-fighter__spark { opacity: 0; }
+
+        .practice-panel--thai .combo-display {
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            padding: 7px 10px;
+            border: 2px solid #000;
+            border-radius: 14px;
+            background: #fff;
+            width: fit-content;
+        }
+
+        .combo-pad {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+        .combo-btn {
+            border: 3px solid #000;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: 6px 6px 0 #000;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            font-family: inherit;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 120ms ease, box-shadow 120ms ease;
+        }
+        .combo-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 4px 4px 0 #000;
+        }
+        .combo-btn:focus-visible {
+            outline: 3px dashed #000;
+            outline-offset: 4px;
+        }
+        .combo-btn kbd {
+            border: 2px solid #000;
+            border-radius: 12px;
+            padding: 3px 8px;
+            background: #ccff00;
+            font-size: 0.78rem;
+            font-family: 'Space Mono', monospace;
+        }
+
+        @keyframes jab {
+            0% { transform: translateX(0) rotate(0deg); }
+            55% { transform: translateX(16px) rotate(-10deg); }
+            100% { transform: translateX(0) rotate(0deg); }
+        }
+        @keyframes cross {
+            0% { transform: translateX(0) rotate(0deg); }
+            55% { transform: translateX(16px) rotate(10deg); }
+            100% { transform: translateX(0) rotate(0deg); }
+        }
+        @keyframes kick {
+            0% { transform: translateX(0) rotate(0deg); }
+            60% { transform: translateX(8px) rotate(-16deg); }
+            100% { transform: translateX(0) rotate(0deg); }
+        }
+        @keyframes teep {
+            0% { transform: translateX(0) rotate(0deg); }
+            60% { transform: translateX(14px) rotate(-6deg); }
+            100% { transform: translateX(0) rotate(0deg); }
+        }
+        @keyframes sparkPop {
+            0% { opacity: 0; transform: scale(0.25) rotate(0deg); }
+            40% { opacity: 1; transform: scale(1) rotate(16deg); }
+            100% { opacity: 0; transform: scale(0.9) rotate(-10deg); }
+        }
+
+        .thai-fighter.move-jab .thai-fighter__arm--lead { animation: jab 260ms ease-out; }
+        .thai-fighter.move-cross .thai-fighter__arm--rear { animation: cross 260ms ease-out; }
+        .thai-fighter.move-kick .thai-fighter__leg--kick { animation: kick 300ms ease-out; }
+        .thai-fighter.move-teep .thai-fighter__leg--kick { animation: teep 300ms ease-out; }
+        .thai-fighter.is-hitting .thai-fighter__spark { animation: sparkPop 340ms ease-out; }
+
+	        @media (prefers-reduced-motion: reduce) {
+	            .practice-bubble { transition: none; }
+	            .mic-control,
+	            .combo-btn { transition: none; }
+	            .practice-panel--mic.is-singing .mic-bar { animation: none; transform: scaleY(0.6); }
+	            .guitar-string.is-plucked::before { animation: none; }
+	            .guitar-board.is-strumming .guitar-pick { animation: none; }
+	            .thai-fighter.move-jab .thai-fighter__arm--lead,
+	            .thai-fighter.move-cross .thai-fighter__arm--rear,
+	            .thai-fighter.move-kick .thai-fighter__leg--kick,
+	            .thai-fighter.move-teep .thai-fighter__leg--kick,
+	            .thai-fighter.is-hitting .thai-fighter__spark { animation: none; }
+	            .style-retro::before,
+	            .style-retro::after,
+	            .style-retro .handle span:first-child,
+	            .style-retro .scanline { animation: none !important; }
+	        }
+
+    </style>
+</head>
+<body>
+
+	    <main id="stage">
+	        <div id="cursor-trail">IDLE</div>
+
+	    <div class="window style-brutalist" id="hero-window" data-vx="2" data-vy="1" style="top: 20%; left: 10%;">
+	        <div class="handle">
+	            <span>> WHO_AM_I.exe</span>
+	            <div class="btn-close"></div>
+        </div>
+        <div class="content">
+            <span class="tag">AI ENGINEER & ENTHUSIAST</span>
+            <h1>Hi, I'm Alex.</h1>
+            <p>I build AI systems for Penguin Random House. <br>  I'm interested in the intersection of technology and media.</p>
+            <p>Drag these windows. Throw them. <br> This page has a physics engine.</p>
+            <button class="chaos-btn" onclick="scramble()">⚠ DO NOT CLICK</button>
+        </div>
+    </div>
+
+    <div class="window style-retro" data-vx="-1" data-vy="1.5" style="top: 20%; left: 50%;">
+        <div class="scanline"></div>
+        <div class="handle">
+            <span>SYS_ADMIN</span> <span>[ONLINE]</span>
+        </div>
+        <div class="content">
+            <h3 style="color: #0ff; margin-top: 0;">Leisure</h3>
+            <p>Outside of work, I like to
+                <br>
+            <br> MAKE NOISE <br> Either with a Squier Tele + Fender Mustang or just my good ol' fashioned larynx (maybe both at once sometime soon!)
+            <br> <br>FLOAT LIKE A BUTTERFLY <br> Trying not to eat too many rear kicks at the Muay Thai gym</p>
+
+        </div>
+    </div>
+
+    <div class="window style-bauhaus" data-vx="0.5" data-vy="-2" style="top: 50%; left: 20%;">
+        <div class="handle">
+            <span></span>
+            <span class="bau-handle-year">2026</span>
+        </div>
+        <div class="content">
+            <div class="bau-rect" aria-hidden="true"></div>
+            <div class="bau-vertical" aria-hidden="true">BAUHAUSE</div>
+            <div class="bau-tri" aria-hidden="true"></div>
+            <div class="bau-circle" aria-hidden="true"></div>
+            <div class="bau-text">
+                <p class="bau-kicker">Curation vs Creation</p>
+                <h2 class="bau-headline">ART <br><span class="bau-amp">&amp;</span> CODE</h2>
+                <p class="bau-body">
+                   With generative AI, the lines blur between curation and creation. <br><br>
+                   Either way, these tokens are a reflection of your tastes, values, and intent. <br><br>
+                   Why let it be sloppy?
+                </p>
+            </div>
+        </div>
+    </div>
+
+	    <div class="window style-glass" data-vx="-2" data-vy="-1" style="top: 60%; left: 60%;">
+	        <div class="handle">Experience_Timeline.app</div>
+	        <div class="content">
+	            <h3>Experience Timeline</h3>
+	            <ol class="exp-timeline" aria-label="Work experience timeline">
+	                <li class="exp-timeline__item">
+	                    <div class="exp-timeline__marker" aria-hidden="true">
+	                        <span class="exp-timeline__dot"></span>
+	                    </div>
+	                    <div class="exp-timeline__card">
+	                        <div class="exp-timeline__meta">
+	                            <span class="exp-timeline__range">2025–Present</span>
+	                            <span class="exp-timeline__role">AI Solutions Engineer</span>
+	                        </div>
+	                        <div class="exp-timeline__org">@ Penguin Random House</div>
+	                        <p class="exp-timeline__desc">Designing, building, evaluating, and deploying AI systems and tools across the publishing value chain. Enhancing piracy prevention, product discoverability, sales, and marketing.</p>
+	                    </div>
+	                </li>
+	                <li class="exp-timeline__item">
+	                    <div class="exp-timeline__marker" aria-hidden="true">
+	                        <span class="exp-timeline__dot"></span>
+	                    </div>
+	                    <div class="exp-timeline__card">
+	                        <div class="exp-timeline__meta">
+	                            <span class="exp-timeline__range">2024–2025</span>
+	                            <span class="exp-timeline__role">Machine Learning Engineer</span>
+	                        </div>
+	                        <div class="exp-timeline__org">@ Penguin Random House</div>
+	                        <p class="exp-timeline__desc">Developed and deployed ML models for pricing and demand forecasting.</p>
+	                    </div>
+	                </li>
+	                <li class="exp-timeline__item">
+	                    <div class="exp-timeline__marker" aria-hidden="true">
+	                        <span class="exp-timeline__dot"></span>
+	                    </div>
+	                    <div class="exp-timeline__card">
+	                        <div class="exp-timeline__meta">
+	                            <span class="exp-timeline__range">2021–2024</span>
+	                            <span class="exp-timeline__role">Project Management Analyst</span>
+	                        </div>
+	                        <div class="exp-timeline__org">@ Penguin Random House</div>
+	                        <p class="exp-timeline__desc">Managing the strategic program on Generative AI. Identifying and coordinating adoption opportunities and risk mitigation strategies.</p>
+	                    </div>
+	                </li>
+	            </ol>
+	            <div class="exp-timeline__footer">Coming_soon.log</div>
+	        </div>
+	    </div>
+
+	    <div class="window style-neu" data-vx="1.5" data-vy="2" style="top: 15%; left: 70%;">
+	        <div class="handle">
+	            <div class="neu-controls" aria-hidden="true">
+	                <span class="neu-dot"></span>
+                <span class="neu-dot"></span>
+                <span class="neu-dot"></span>
+            </div>
+            LINK_HUB.soft
+        </div>
+        <div class="content">
+            <p class="neu-kicker">Resume • GitHub • LinkedIn • Email</p>
+            <div class="neu-links">
+                <a class="neu-tile neu-tile--resume" href="aliu%20Resume%20Jan%202026.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open resume">
+                    <span class="neu-tile__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M7 3h7l3 3v15a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                            <path d="M14 3v3a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                            <path d="M8.5 12h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                            <path d="M8.5 16h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                    <span class="neu-tile__label">Resume</span>
+                </a>
+                <a class="neu-tile neu-tile--github" href="https://github.com/your-username" target="_blank" rel="noopener noreferrer" aria-label="Open GitHub">
+                    <span class="neu-tile__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M9 9 6 12l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="m15 9 3 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="m13 7-2 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span class="neu-tile__label">GitHub</span>
+                </a>
+                <a class="neu-tile neu-tile--linkedin" href="https://www.linkedin.com/in/alexanderzliu" target="_blank" rel="noopener noreferrer" aria-label="Open LinkedIn">
+                    <span class="neu-tile__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <rect x="4.5" y="6" width="15" height="12" rx="3" stroke="currentColor" stroke-width="1.8"/>
+                            <circle cx="8.8" cy="11" r="1.6" stroke="currentColor" stroke-width="1.8"/>
+                            <path d="M12 10h5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                            <path d="M12 13h5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                            <path d="M6.5 16h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                    <span class="neu-tile__label">LinkedIn</span>
+                </a>
+                <a class="neu-tile neu-tile--email" href="mailto:aliksliu@gmail.com" aria-label="Send email">
+                    <span class="neu-tile__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <rect x="4.5" y="6.5" width="15" height="11" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+                            <path d="m5.5 8 6.5 5 6.5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span class="neu-tile__label">Email</span>
+                </a>
+            </div>
+	        </div>
+	    </div>
+	
+			    <div class="window style-terminal" data-vx="3" data-vy="1" style="top: 70%; left: 10%;">
+			        <div class="handle">
+			            <div class="term-controls" aria-hidden="true">
+			                <span class="term-dot term-dot--close"></span>
+			                <span class="term-dot term-dot--min"></span>
+			                <span class="term-dot term-dot--max"></span>
+			            </div>
+			            <div class="term-title">user_prompt.txt</div>
+			            <div class="term-status" aria-label="Terminal status">
+			                <span class="term-led" aria-hidden="true"></span>
+			                LIVE
+			            </div>
+			        </div>
+			        <div class="content">
+			            <pre class="term-output" id="typewriter" aria-label="Terminal output"></pre>
+			        </div>
+			    </div>
+		    </main>
+
+	    <footer class="practice-footer" id="practice-footer" aria-label="After-hours practice footer">
+	        <div class="practice-footer__inner">
+	            <header class="practice-footer__header">
+	                <h2 class="practice-footer__title">After-Hours Practice</h2>
+	                <p class="practice-footer__subtitle">Hold to sing • Pluck strings • Build combos</p>
+	            </header>
+
+	            <div class="practice-grid">
+	                <section class="practice-panel practice-panel--mic" aria-labelledby="practice-mic-title">
+	                    <h3 class="practice-panel__title" id="practice-mic-title">Singing</h3>
+	                    <button type="button" class="mic-control" id="mic-control" aria-label="Hold to sing" aria-describedby="mic-bubble">
+	                        <span class="mic-control__icon" aria-hidden="true">
+	                            <svg viewBox="0 0 48 48" fill="none">
+	                                <rect x="18" y="4.5" width="12" height="23" rx="6" fill="#ccff00" stroke="#000" stroke-width="2.8"/>
+	                                <path d="M14 22v2.5a10 10 0 0 0 20 0V22" stroke="#000" stroke-width="2.8" stroke-linecap="round"/>
+	                                <path d="M24 35v6" stroke="#000" stroke-width="2.8" stroke-linecap="round"/>
+	                                <path d="M18 41h12" stroke="#000" stroke-width="2.8" stroke-linecap="round"/>
+	                            </svg>
+	                        </span>
+	                        <span class="mic-meter" aria-hidden="true">
+	                            <span class="mic-bar"></span>
+	                            <span class="mic-bar"></span>
+	                            <span class="mic-bar"></span>
+	                            <span class="mic-bar"></span>
+	                            <span class="mic-bar"></span>
+	                            <span class="mic-bar"></span>
+	                            <span class="mic-bar"></span>
+	                        </span>
+	                        <span class="mic-control__prompt" aria-hidden="true">hold</span>
+	                    </button>
+	                    <div class="practice-bubble" id="mic-bubble" role="status" aria-live="polite"></div>
+	                </section>
+
+	                <section class="practice-panel practice-panel--guitar" aria-labelledby="practice-guitar-title">
+	                    <h3 class="practice-panel__title" id="practice-guitar-title">Guitar</h3>
+	                    <div class="guitar-board" role="group" aria-label="Guitar strings">
+	                        <div class="guitar-frets" aria-hidden="true"></div>
+	                        <button type="button" class="guitar-string guitar-string--e2" data-note="E" aria-label="Pluck low E string"></button>
+	                        <button type="button" class="guitar-string guitar-string--a2" data-note="A" aria-label="Pluck A string"></button>
+	                        <button type="button" class="guitar-string guitar-string--d3" data-note="D" aria-label="Pluck D string"></button>
+	                        <button type="button" class="guitar-string guitar-string--g3" data-note="G" aria-label="Pluck G string"></button>
+	                        <button type="button" class="guitar-string guitar-string--b3" data-note="B" aria-label="Pluck B string"></button>
+	                        <button type="button" class="guitar-string guitar-string--e4" data-note="e" aria-label="Pluck high E string"></button>
+	                        <div class="guitar-pick" aria-hidden="true"></div>
+	                    </div>
+	                    <div class="practice-bubble" id="guitar-bubble" role="status" aria-live="polite"></div>
+	                </section>
+
+	                <section class="practice-panel practice-panel--thai" aria-labelledby="practice-thai-title">
+	                    <h3 class="practice-panel__title" id="practice-thai-title">Muay Thai</h3>
+	                    <div class="thai-ring" aria-hidden="true">
+	                        <div class="thai-fighter" id="thai-fighter">
+	                            <svg class="thai-fighter__svg" viewBox="0 0 160 92" fill="none">
+	                                <path d="M10 76h140" stroke="#000" stroke-width="4" stroke-linecap="round" opacity="0.25"/>
+	                                <g class="thai-fighter__bounce">
+	                                    <circle cx="52" cy="26" r="12" fill="#ffd1e8" stroke="#000" stroke-width="4"/>
+	                                    <path d="M44 44c10-7 18-7 28 0" fill="#ccff00" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                    <path d="M52 44v22" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                    <path d="M52 66l-14 14" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                    <path d="M52 66l14 14" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                    <g class="thai-fighter__arm thai-fighter__arm--lead">
+	                                        <path d="M52 50l22 2" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                        <circle cx="82" cy="53" r="7" fill="#ff0055" stroke="#000" stroke-width="4"/>
+	                                    </g>
+	                                    <g class="thai-fighter__arm thai-fighter__arm--rear">
+	                                        <path d="M52 50l-20 8" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                        <circle cx="24" cy="61" r="7" fill="#ff0055" stroke="#000" stroke-width="4"/>
+	                                    </g>
+	                                    <g class="thai-fighter__leg thai-fighter__leg--kick">
+	                                        <path d="M52 66l26-6" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                        <path d="M78 60l14 6" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                    </g>
+	                                    <g class="thai-fighter__spark">
+	                                        <path d="M118 44l4 8 8 4-8 4-4 8-4-8-8-4 8-4 4-8Z" fill="#ccff00" stroke="#000" stroke-width="3"/>
+	                                    </g>
+	                                </g>
+	                            </svg>
+	                        </div>
+	                    </div>
+	                    <div class="combo-display" id="combo-display" role="status" aria-live="polite">Combo: —</div>
+	                    <div class="combo-pad" role="group" aria-label="Muay Thai combo pad">
+	                        <button type="button" class="combo-btn" data-move="jab" data-key="j">
+	                            Jab <kbd>J</kbd>
+	                        </button>
+	                        <button type="button" class="combo-btn" data-move="cross" data-key="c">
+	                            Cross <kbd>C</kbd>
+	                        </button>
+	                        <button type="button" class="combo-btn" data-move="kick" data-key="k">
+	                            Kick <kbd>K</kbd>
+	                        </button>
+	                        <button type="button" class="combo-btn" data-move="teep" data-key="t">
+	                            Teep <kbd>T</kbd>
+	                        </button>
+	                    </div>
+	                </section>
+	            </div>
+	        </div>
+	    </footer>
+
+	    <script>
+	        // --- 1. THE TYPEWRITER ---
+	        const promptText = `> GENERATE_WEBSITE --style=chaos --panels=all
+> LOADING: Bauhaus... [OK]
+> LOADING: Neumorphism... [OK]
+> LOADING: Synthwave... [OK]
+> WARNING: Styles are clashing.
+> SYSTEM: Proceed anyway.`;
+
+        let i = 0;
+        const typeDest = document.getElementById('typewriter');
+        function typeWriter() {
+            if (i < promptText.length) {
+                typeDest.textContent += promptText.charAt(i);
+                i++;
+                setTimeout(typeWriter, 30);
+            }
+        }
+        setTimeout(typeWriter, 500);
+
+		        // --- 2. PHYSICS ENGINE ---
+		        const stage = document.getElementById('stage');
+		        const windows = document.querySelectorAll('.window');
+		        const getBounds = () => ({
+		            w: (stage && stage.clientWidth) ? stage.clientWidth : window.innerWidth,
+		            h: (stage && stage.clientHeight) ? stage.clientHeight : window.innerHeight
+		        });
+		        let bounds = getBounds();
+		        let isDragging = false;
+		        let dragTarget = null;
+		        let offset = { x: 0, y: 0 };
+	        let lastX = 0, lastY = 0;
+	        let speedX = 0, speedY = 0;
+	        let physicsStarted = false;
+
+	        // Initialize positions (paused) & store initial velocities
+	        windows.forEach(win => {
+	            const parsedVx = Number.parseFloat(win.dataset.vx);
+	            const parsedVy = Number.parseFloat(win.dataset.vy);
+	            const initialVx = Number.isFinite(parsedVx) ? parsedVx : (Math.random() - 0.5) * 4;
+	            const initialVy = Number.isFinite(parsedVy) ? parsedVy : (Math.random() - 0.5) * 4;
+
+	            win.state = {
+	                x: win.offsetLeft,
+	                y: win.offsetTop,
+	                vx: 0,
+	                vy: 0,
+	                initialVx,
+	                initialVy
+	            };
+	        });
+
+	        function startPhysics() {
+	            if (physicsStarted) return;
+	            physicsStarted = true;
+
+	            windows.forEach(win => {
+	                const state = win.state;
+	                if (!state) return;
+	                state.x = win.offsetLeft;
+	                state.y = win.offsetTop;
+	                if (state.vx === 0 && state.vy === 0) {
+	                    state.vx = state.initialVx;
+	                    state.vy = state.initialVy;
+	                }
+	            });
+
+	            requestAnimationFrame(updatePhysics);
+	        }
+
+	        function updatePhysics() {
+	            if (!isDragging) {
+	                windows.forEach(win => {
+	                    let s = win.state;
+
+                    // Move
+                    s.x += s.vx;
+                    s.y += s.vy;
+
+                    // Bounce X
+                    if (s.x <= 0 || s.x + win.offsetWidth >= bounds.w) {
+                        s.vx *= -1;
+                        s.x = Math.max(0, Math.min(s.x, bounds.w - win.offsetWidth));
+                    }
+
+                    // Bounce Y
+                    if (s.y <= 0 || s.y + win.offsetHeight >= bounds.h) {
+                        s.vy *= -1;
+                        s.y = Math.max(0, Math.min(s.y, bounds.h - win.offsetHeight));
+                    }
+
+                    win.style.left = s.x + 'px';
+                    win.style.top = s.y + 'px';
+	                });
+	            }
+	            requestAnimationFrame(updatePhysics);
+	        }
+
+	        // --- 3. DRAGGING INTERACTION ---
+        
+        // Helper to bring window to front
+        function bringToFront(el) {
+            let maxZ = 10;
+            windows.forEach(w => {
+                let z = parseInt(window.getComputedStyle(w).zIndex);
+                if (z > maxZ) maxZ = z;
+            });
+            el.style.zIndex = maxZ + 1;
+        }
+
+        windows.forEach(win => {
+            const handle = win.querySelector('.handle');
+            
+            // MOUSE DOWN
+            handle.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                dragTarget = win;
+                bringToFront(win);
+                
+                const rect = win.getBoundingClientRect();
+                offset.x = e.clientX - rect.left;
+                offset.y = e.clientY - rect.top;
+                
+                // Freeze physics for this window specifically? 
+                // Simplified: we pause global physics update in this script for smoothness, 
+                // but we could just zero out velocity.
+            });
+        });
+
+        // MOUSE MOVE
+        document.addEventListener('mousemove', (e) => {
+            // Update custom cursor
+            const cursor = document.getElementById('cursor-trail');
+            cursor.style.left = (e.clientX + 15) + 'px';
+            cursor.style.top = (e.clientY + 15) + 'px';
+            cursor.innerText = `X:${e.clientX} Y:${e.clientY}`;
+
+            if (isDragging && dragTarget) {
+                // Calculate throw velocity
+                speedX = e.clientX - lastX;
+                speedY = e.clientY - lastY;
+                lastX = e.clientX;
+                lastY = e.clientY;
+
+                // Move element directly
+                let newX = e.clientX - offset.x;
+                let newY = e.clientY - offset.y;
+                
+                // Update internal state so physics knows where it is when dropped
+                dragTarget.state.x = newX;
+                dragTarget.state.y = newY;
+                
+                dragTarget.style.left = newX + 'px';
+                dragTarget.style.top = newY + 'px';
+            } else {
+                lastX = e.clientX;
+                lastY = e.clientY;
+            }
+        });
+
+        // MOUSE UP
+	        document.addEventListener('mouseup', () => {
+	            if (isDragging && dragTarget) {
+	                // Apply throw velocity to the physics state
+	                dragTarget.state.vx = speedX * 0.5;
+	                dragTarget.state.vy = speedY * 0.5;
+	                
+	                isDragging = false;
+	                dragTarget = null;
+	                startPhysics();
+	            }
+	        });
+
+	        // RESIZE
+	        window.addEventListener('resize', () => {
+	            bounds = getBounds();
+	        });
+
+	        // --- 4. CHAOS BUTTON ---
+		        function scramble() {
+		            startPhysics();
+		            const colors = ['#ff0055', '#ccff00', '#0099ff', '#ffffff'];
+		            document.body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+	            windows.forEach(win => {
+	                const state = win.state;
+                if (!state) return;
+                state.vx = (Math.random() - 0.5) * 20;
+                state.vy = (Math.random() - 0.5) * 20;
+                win.style.transform = `rotate(${Math.random() * 360}deg)`;
+            });
+
+	            const fonts = ['Courier New', 'Arial', 'Times New Roman', 'Impact'];
+	            document.body.style.fontFamily = fonts[Math.floor(Math.random() * fonts.length)];
+	        }
+
+	        // --- 5. PRACTICE FOOTER ---
+	        let practiceFooterInView = false;
+	        const practiceFooter = document.getElementById('practice-footer');
+	        if (practiceFooter && 'IntersectionObserver' in window) {
+	            const practiceObserver = new IntersectionObserver(
+	                (entries) => {
+	                    const entry = entries[0];
+	                    practiceFooterInView = Boolean(entry && entry.isIntersecting);
+	                    document.body.classList.toggle('practice-footer-inview', practiceFooterInView);
+	                },
+	                { threshold: 0.35 }
+	            );
+	            practiceObserver.observe(practiceFooter);
+	        } else if (practiceFooter) {
+	            const updatePracticeFooterInView = () => {
+	                const rect = practiceFooter.getBoundingClientRect();
+	                practiceFooterInView = rect.top < window.innerHeight * 0.8 && rect.bottom > window.innerHeight * 0.2;
+	                document.body.classList.toggle('practice-footer-inview', practiceFooterInView);
+	            };
+	            window.addEventListener('scroll', updatePracticeFooterInView, { passive: true });
+	            updatePracticeFooterInView();
+	        }
+
+	        function showPracticeBubble(el, text, ttlMs = 1200) {
+	            if (!el) return;
+	            el.textContent = text;
+	            el.classList.add('is-visible');
+	            window.clearTimeout(el._hideTimer);
+	            el._hideTimer = window.setTimeout(() => {
+	                el.classList.remove('is-visible');
+	            }, ttlMs);
+	        }
+
+	        // Singing: press-and-hold meter
+	        const micPanel = document.querySelector('.practice-panel--mic');
+	        const micControl = document.getElementById('mic-control');
+	        const micBubble = document.getElementById('mic-bubble');
+	        let micHeld = false;
+	        let micStartedAt = 0;
+
+	        const micShortPhrases = ['la~', 'doo~', 'warmup!', 'mmm~'];
+	        const micLongPhrases = ['BELT!', 'vibrato!', 'power note!', 'big chorus!'];
+
+	        function startMic() {
+	            if (micHeld) return;
+	            micHeld = true;
+	            micStartedAt = Date.now();
+	            if (micPanel) micPanel.classList.add('is-singing');
+	            if (micBubble) {
+	                micBubble.textContent = '';
+	                micBubble.classList.remove('is-visible');
+	            }
+	        }
+	        function stopMic() {
+	            if (!micHeld) return;
+	            micHeld = false;
+	            if (micPanel) micPanel.classList.remove('is-singing');
+
+	            const heldMs = Date.now() - micStartedAt;
+	            const pool = heldMs > 900 ? micLongPhrases : micShortPhrases;
+	            const phrase = pool[Math.floor(Math.random() * pool.length)];
+	            showPracticeBubble(micBubble, phrase);
+	        }
+
+	        if (micControl) {
+	            micControl.addEventListener('pointerdown', (e) => {
+	                if (e.button !== undefined && e.button !== 0) return;
+	                startMic();
+	                if (micControl.setPointerCapture) micControl.setPointerCapture(e.pointerId);
+	                e.preventDefault();
+	            });
+	            micControl.addEventListener('pointerup', () => stopMic());
+	            micControl.addEventListener('pointercancel', () => stopMic());
+	            micControl.addEventListener('lostpointercapture', () => stopMic());
+
+	            micControl.addEventListener('keydown', (e) => {
+	                if (e.repeat) return;
+	                if (e.key === ' ' || e.key === 'Enter') {
+	                    startMic();
+	                    e.preventDefault();
+	                }
+	            });
+	            micControl.addEventListener('keyup', (e) => {
+	                if (e.key === ' ' || e.key === 'Enter') {
+	                    stopMic();
+	                    e.preventDefault();
+	                }
+	            });
+	        }
+
+	        // Guitar: tap or strum across strings
+	        const guitarBoard = document.querySelector('.guitar-board');
+	        const guitarBubble = document.getElementById('guitar-bubble');
+	        const guitarStrings = Array.from(document.querySelectorAll('.guitar-string'));
+	        const guitarNamesByNote = {
+	            E: 'low E',
+	            A: 'A',
+	            D: 'D',
+	            G: 'G',
+	            B: 'B',
+	            e: 'high E'
+	        };
+
+	        function pluckString(stringEl) {
+	            if (!stringEl) return;
+	            const now = (window.performance && performance.now) ? performance.now() : Date.now();
+	            const last = stringEl._pluckAt || 0;
+	            if (now - last < 80) return;
+	            stringEl._pluckAt = now;
+
+	            stringEl.classList.remove('is-plucked');
+	            void stringEl.offsetWidth;
+	            stringEl.classList.add('is-plucked');
+
+	            const note = stringEl.dataset.note || '?';
+	            const label = guitarNamesByNote[note] || note;
+	            const phrasePool = [`♪ ${note}`, `${label} string!`, `plink: ${note}`];
+	            const phrase = phrasePool[Math.floor(Math.random() * phrasePool.length)];
+	            showPracticeBubble(guitarBubble, phrase, 1100);
+
+	            if (guitarBoard) {
+	                guitarBoard.classList.remove('is-strumming');
+	                void guitarBoard.offsetWidth;
+	                guitarBoard.classList.add('is-strumming');
+	                window.clearTimeout(guitarBoard._strumTimer);
+	                guitarBoard._strumTimer = window.setTimeout(() => {
+	                    guitarBoard.classList.remove('is-strumming');
+	                }, 280);
+	            }
+	        }
+
+	        guitarStrings.forEach((btn) => {
+	            btn.addEventListener('click', () => pluckString(btn));
+	        });
+
+	        if (guitarBoard) {
+	            let strumming = false;
+	            const pluckedThisDrag = new Set();
+
+	            const pluckFromPoint = (clientX, clientY) => {
+	                const el = document.elementFromPoint(clientX, clientY);
+	                const target = el && el.closest && el.closest('.guitar-string');
+	                if (!target || !guitarBoard.contains(target)) return;
+	                if (pluckedThisDrag.has(target)) return;
+	                pluckedThisDrag.add(target);
+	                pluckString(target);
+	            };
+
+	            guitarBoard.addEventListener('pointerdown', (e) => {
+	                if (e.button !== undefined && e.button !== 0) return;
+	                strumming = true;
+	                pluckedThisDrag.clear();
+	                if (guitarBoard.setPointerCapture) guitarBoard.setPointerCapture(e.pointerId);
+	                pluckFromPoint(e.clientX, e.clientY);
+	                e.preventDefault();
+	            });
+	            guitarBoard.addEventListener('pointermove', (e) => {
+	                if (!strumming) return;
+	                pluckFromPoint(e.clientX, e.clientY);
+	            });
+	            const endStrum = () => {
+	                strumming = false;
+	                pluckedThisDrag.clear();
+	            };
+	            guitarBoard.addEventListener('pointerup', endStrum);
+	            guitarBoard.addEventListener('pointercancel', endStrum);
+	            guitarBoard.addEventListener('lostpointercapture', endStrum);
+	        }
+
+	        // Muay Thai: combo pad (buttons + keys)
+	        const comboDisplay = document.getElementById('combo-display');
+	        const comboButtons = Array.from(document.querySelectorAll('.combo-btn'));
+	        const thaiFighter = document.getElementById('thai-fighter');
+	        const moveKeyToMove = {};
+	        comboButtons.forEach((btn) => {
+	            const key = String(btn.dataset.key || '').toLowerCase();
+	            const move = String(btn.dataset.move || '').toLowerCase();
+	            if (key && move) moveKeyToMove[key] = move;
+	        });
+	        const moveToLetter = { jab: 'J', cross: 'C', kick: 'K', teep: 'T' };
+	        let combo = [];
+	        let comboLastAt = 0;
+	        let fighterAnimToken = 0;
+
+	        function setComboDisplay() {
+	            if (!comboDisplay) return;
+	            comboDisplay.textContent = combo.length ? `Combo: ${combo.join('–')}` : 'Combo: —';
+	        }
+
+	        function animateFighter(move) {
+	            if (!thaiFighter) return;
+	            const classes = ['move-jab', 'move-cross', 'move-kick', 'move-teep', 'is-hitting'];
+	            thaiFighter.classList.remove(...classes);
+	            fighterAnimToken += 1;
+	            const token = fighterAnimToken;
+	            thaiFighter.classList.add(`move-${move}`, 'is-hitting');
+	            window.setTimeout(() => {
+	                if (token !== fighterAnimToken) return;
+	                thaiFighter.classList.remove(`move-${move}`, 'is-hitting');
+	            }, 360);
+	        }
+
+	        function doMove(move) {
+	            if (!moveToLetter[move]) return;
+	            const now = Date.now();
+	            if (now - comboLastAt > 1400) combo = [];
+	            comboLastAt = now;
+	            combo.push(moveToLetter[move]);
+	            combo = combo.slice(-8);
+	            setComboDisplay();
+	            animateFighter(move);
+	        }
+
+	        comboButtons.forEach((btn) => {
+	            btn.addEventListener('click', () => doMove(String(btn.dataset.move || '').toLowerCase()));
+	        });
+
+	        document.addEventListener('keydown', (e) => {
+	            if (!practiceFooterInView) return;
+	            if (e.repeat) return;
+	            if (e.target && e.target.closest && e.target.closest('input, textarea, [contenteditable="true"]')) return;
+
+	            if (e.key === 'Escape') {
+	                combo = [];
+	                setComboDisplay();
+	                return;
+	            }
+
+	            const key = String(e.key || '').toLowerCase();
+	            const move = moveKeyToMove[key];
+	            if (!move) return;
+	            doMove(move);
+	        });
+
+	        setComboDisplay();
+
+	    </script>
+</body>
+</html>
