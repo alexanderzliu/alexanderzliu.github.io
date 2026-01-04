@@ -1,0 +1,139 @@
+/* ============================================
+   TYPOGRAPHY - Chicago & Geneva style
+============================================ */
+
+.window__content h1 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--pure-black);
+}
+
+.window__content h2 {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 16px 0 10px 0;
+}
+
+.window__content h3 {
+    font-size: 15px;
+    font-weight: bold;
+    margin: 14px 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.window__content p {
+    margin-bottom: 12px;
+}
+
+/* Links - INVERTED on hover */
+.window__content a {
+    color: var(--pure-black);
+    text-decoration: underline;
+}
+
+.window__content a:hover {
+    background: var(--pure-black);
+    color: var(--pure-white);
+}
+
+.divider {
+    height: 1px;
+    background: var(--pure-black);
+    margin: 12px 0;
+}
+
+/* ============================================
+   MAC ICON FACE - Classic happy Mac
+============================================ */
+
+.mac-icon-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.mac-face {
+    width: 36px;
+    height: 44px;
+    background: #eeeeee;
+    border: 2px solid var(--pure-black);
+    border-radius: 3px 3px 6px 6px;
+    position: relative;
+}
+
+/* Screen */
+.mac-face::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 5px;
+    width: 22px;
+    height: 16px;
+    background: var(--pure-white);
+    border: 1px solid var(--pure-black);
+}
+
+/* Happy face */
+.mac-face::after {
+    content: ':)';
+    font-family: 'Chicago', monospace;
+    font-size: 10px;
+    position: absolute;
+    top: 7px;
+    left: 10px;
+    color: var(--pure-black);
+}
+
+/* Disk slot */
+.mac-face .disk-slot {
+    position: absolute;
+    bottom: 6px;
+    left: 8px;
+    width: 16px;
+    height: 3px;
+    background: var(--pure-black);
+}
+
+/* ============================================
+   TIMELINE ITEMS
+============================================ */
+
+.timeline {
+    list-style: none;
+}
+
+.timeline__item {
+    padding: 12px;
+    margin-bottom: 12px;
+    background: var(--pure-white);
+    border: 1px solid var(--pure-black);
+}
+
+.timeline__date {
+    font-family: 'Geneva', 'Chicago', monospace;
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.timeline__role {
+    font-weight: bold;
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.timeline__org {
+    font-family: 'Geneva', 'Chicago', monospace;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.timeline__desc {
+    font-family: 'Geneva', 'Chicago', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+}

@@ -1,0 +1,20 @@
+/* ============================================
+   RESPONSIVE
+============================================ */
+
+@media (max-width: 600px) {
+    .window {
+        min-width: 280px !important;
+        max-width: calc(100vw - 20px) !important;
+    }
+    .desktop-icons {
+        right: 4px;
+        gap: 2px;
+    }
+    .desktop-icon {
+        width: 64px;
+    }
+    .desktop-icon__label {
+        font-size: 8px;
+    }
+}

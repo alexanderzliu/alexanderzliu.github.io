@@ -1,0 +1,22 @@
+/* ============================================
+   VARIABLES & FONTS
+   CSS custom properties and font imports
+============================================ */
+
+/* True pixel bitmap fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
+
+/* Fallback Chicago font */
+@font-face {
+    font-family: 'Chicago';
+    src: url('https://cdn.jsdelivr.net/gh/nickshanks/Chavenir@master/Chicago.ttf') format('truetype');
+}
+
+:root {
+    --pure-black: #000000;
+    --pure-white: #ffffff;
+    /* Desktop background tuning (helps reduce moire/flicker while moving the window) */
+    --dither-size: 4px;
+    --desktop-base: #e1e1e1;
+    --desktop-ink: rgba(0, 0, 0, 0.08);
+}
