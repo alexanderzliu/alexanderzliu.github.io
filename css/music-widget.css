@@ -1,0 +1,120 @@
+/* ============================================
+   MUSIC WIDGET - Last.fm Now Playing
+============================================ */
+
+.music-widget {
+    position: fixed;
+    bottom: 52px;
+    left: 8px;
+    top: auto !important;
+}
+
+.music-widget__content {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.music-widget__album {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--pure-white);
+    border: 1px solid var(--pure-black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.music-widget__album-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Dithered/retro effect */
+    image-rendering: pixelated;
+}
+
+.music-widget__album-placeholder {
+    width: 100%;
+    height: 100%;
+    /* Checkerboard pattern placeholder */
+    background-image:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-size: 8px 8px;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+}
+
+.music-widget__info {
+    text-align: center;
+}
+
+.music-widget__track {
+    font-family: 'Chicago', 'Geneva', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--pure-black);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.music-widget__artist {
+    font-family: 'Geneva', 'Chicago', monospace;
+    font-size: 12px;
+    color: var(--pure-black);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.music-widget__status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px solid var(--pure-black);
+}
+
+.music-widget__live-indicator {
+    font-family: 'Geneva', 'Chicago', monospace;
+    font-size: 10px;
+    color: var(--pure-black);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.music-widget__live-indicator::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--pure-black);
+    border-radius: 50%;
+}
+
+.music-widget__live-indicator.is-live::before {
+    /* Pulsing animation for live */
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.music-widget__lastfm-link {
+    font-family: 'Geneva', 'Chicago', monospace;
+    font-size: 10px;
+    color: var(--pure-black);
+    text-decoration: underline;
+}
+
+.music-widget__lastfm-link:hover {
+    background: var(--pure-black);
+    color: var(--pure-white);
+}
