@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/icons.css">
     <link rel="stylesheet" href="css/typography.css">
     <link rel="stylesheet" href="css/control-strip.css">
+    <link rel="stylesheet" href="css/music-widget.css">
     <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
@@ -219,11 +220,37 @@
             </div>
             <div class="window__resize"></div>
         </div>
+
+        <!-- Now Playing Widget -->
+        <div class="window music-widget" id="window-music" style="width: 280px;">
+            <div class="window__titlebar">
+                <div class="window__close" data-close></div>
+                <span class="window__title">Now Playing</span>
+                <div class="window__zoom"></div>
+            </div>
+            <div class="window__body">
+                <div class="music-widget__content">
+                    <div class="music-widget__album">
+                        <div class="music-widget__album-placeholder"></div>
+                    </div>
+                    <div class="music-widget__info">
+                        <div class="music-widget__track">Loading...</div>
+                        <div class="music-widget__artist"></div>
+                    </div>
+                    <div class="music-widget__status">
+                        <span class="music-widget__live-indicator"></span>
+                        <a href="https://www.last.fm/user/azliu" target="_blank" class="music-widget__lastfm-link">last.fm</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- JavaScript Modules -->
+    <script src="js/config.js"></script>
     <script src="js/clock.js"></script>
     <script src="js/window-manager.js"></script>
     <script src="js/resize.js"></script>
+    <script src="js/lastfm.js"></script>
 </body>
 </html>
