@@ -1,0 +1,52 @@
+/* ============================================
+   BASE STYLES
+   Reset and foundational styles
+============================================ */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Silkscreen', 'Chicago', monospace;
+    font-size: 8px;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+    font-smooth: never;
+    text-rendering: geometricPrecision;
+    cursor: default;
+}
+
+/* ============================================
+   DITHERED CHECKERBOARD BACKGROUND
+   True 1-bit aesthetic - alternating pixels
+============================================ */
+.desktop {
+    position: fixed;
+    top: 36px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Softer 1-bit dither (lower contrast + axis-aligned edges = less shimmer on repaint) */
+    background-color: var(--desktop-base);
+    background-image: conic-gradient(
+        from 90deg,
+        var(--desktop-ink) 0 25%,
+        transparent 0 50%,
+        var(--desktop-ink) 0 75%,
+        transparent 0
+    );
+    background-size: var(--dither-size) var(--dither-size);
+    background-position: 0 0;
+}

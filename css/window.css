@@ -1,0 +1,182 @@
+/* ============================================
+   WINDOW CHROME - Pinstripe title bars
+============================================ */
+
+.window {
+    position: absolute;
+    background: var(--pure-white);
+    /* 1px black border + hard drop shadow (bottom-right only) */
+    border: 1px solid var(--pure-black);
+    box-shadow:
+        2px 2px 0 0 var(--pure-black);
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.window.is-open {
+    display: flex;
+}
+
+/* PINSTRIPE TITLE BAR - Horizontal lines */
+.window__titlebar {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    /* Authentic horizontal pinstripes */
+    background: repeating-linear-gradient(
+        180deg,
+        var(--pure-white) 0px,
+        var(--pure-white) 1px,
+        var(--pure-black) 1px,
+        var(--pure-black) 2px
+    );
+    border-bottom: 1px solid var(--pure-black);
+    cursor: grab;
+    user-select: none;
+}
+
+.window__titlebar:active {
+    cursor: grabbing;
+}
+
+/* Close Box - Simple white square with black border */
+.window__close {
+    width: 16px;
+    height: 14px;
+    background: var(--pure-white);
+    border: 1px solid var(--pure-black);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* INVERTED on click */
+.window__close:active {
+    background: var(--pure-black);
+}
+
+/* Zoom Box - Right side */
+.window__zoom {
+    width: 16px;
+    height: 14px;
+    background: var(--pure-white);
+    border: 1px solid var(--pure-black);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.window__zoom::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 6px;
+    height: 4px;
+    border: 1px solid var(--pure-black);
+}
+
+.window__title {
+    flex: 1;
+    text-align: center;
+    font-size: 16px;
+    font-family: 'Silkscreen', 'Chicago', monospace;
+    font-weight: 700;
+    color: var(--pure-black);
+    padding: 4px 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* White background behind title for readability */
+    background: var(--pure-white);
+    margin: 0 10px;
+    line-height: 22px;
+}
+
+/* Window Body */
+.window__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: var(--pure-white);
+}
+
+.window__content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    font-size: 14px;
+    font-family: 'Chicago', 'Geneva', monospace;
+    line-height: 1.6;
+    color: var(--pure-black);
+}
+
+/* PATTERNED SCROLLBAR - Dot/screen tone pattern */
+.window__content::-webkit-scrollbar {
+    width: 16px;
+}
+
+.window__content::-webkit-scrollbar-track {
+    /* Dot pattern for scrollbar track */
+    background-color: var(--pure-white);
+    background-image: radial-gradient(var(--pure-black) 1px, transparent 1px);
+    background-size: 3px 3px;
+    border-left: 1px solid var(--pure-black);
+}
+
+.window__content::-webkit-scrollbar-thumb {
+    background: var(--pure-white);
+    border: 1px solid var(--pure-black);
+}
+
+.window__content::-webkit-scrollbar-thumb:hover {
+    /* INVERTED on hover */
+    background: var(--pure-black);
+}
+
+.window__content::-webkit-scrollbar-button {
+    height: 16px;
+    background: var(--pure-white);
+    border: 1px solid var(--pure-black);
+}
+
+/* Status Bar */
+.window__status {
+    height: 18px;
+    background: var(--pure-white);
+    border-top: 1px solid var(--pure-black);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    font-size: 10px;
+    font-family: 'Geneva', 'Chicago', monospace;
+    color: var(--pure-black);
+}
+
+/* Resize Handle - Diagonal lines */
+.window__resize {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 15px;
+    height: 15px;
+    cursor: se-resize;
+    background:
+        linear-gradient(135deg,
+            transparent 0%,
+            transparent 30%,
+            var(--pure-black) 30%,
+            var(--pure-black) 35%,
+            transparent 35%,
+            transparent 50%,
+            var(--pure-black) 50%,
+            var(--pure-black) 55%,
+            transparent 55%,
+            transparent 70%,
+            var(--pure-black) 70%,
+            var(--pure-black) 75%,
+            transparent 75%
+        );
+}

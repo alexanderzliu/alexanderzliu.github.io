@@ -1,0 +1,94 @@
+/* ============================================
+   FOLDER ICONS - Grid layout inside windows
+============================================ */
+
+.folder-icons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 16px;
+    row-gap: 80px;
+    padding: 24px;
+    flex: 1;
+    min-height: 300px;
+    align-content: center;
+}
+
+.folder-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    justify-self: center;
+}
+
+.folder-icon:focus {
+    outline: none;
+}
+
+.folder-icon__image {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 8px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.folder-icon__label {
+    font-family: 'Silkscreen', 'Chicago', monospace;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+    padding: 6px 10px;
+    max-width: 140px;
+    line-height: 1.4;
+    color: var(--pure-black);
+    word-wrap: break-word;
+    letter-spacing: 0px;
+}
+
+/* INVERTED SELECTION - Icon labels */
+.folder-icon:focus .folder-icon__label,
+.folder-icon:active .folder-icon__label,
+.folder-icon.selected .folder-icon__label {
+    background: var(--pure-black);
+    color: var(--pure-white);
+}
+
+/* Folder window header bar with item count */
+.folder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--pure-black);
+    font-family: 'Silkscreen', 'Chicago', monospace;
+    font-size: 12px;
+    font-weight: 400;
+    background: var(--pure-white);
+}
+
+.folder-header__items {
+    color: var(--pure-black);
+}
+
+.folder-header__size {
+    color: var(--pure-black);
+}
+
+/* ============================================
+   ICONS - System 7-inspired pixel art (32x32)
+============================================ */
+
+.icon-person { background-image: url("../assets/icons/folder-person.svg"); }
+.icon-briefcase { background-image: url("../assets/icons/folder-briefcase.svg"); }
+.icon-music { background-image: url("../assets/icons/folder-music.svg"); }
+.icon-palette { background-image: url("../assets/icons/folder-palette.svg"); }
+.icon-document { background-image: url("../assets/icons/document.svg"); }
+.icon-github { background-image: url("../assets/icons/github.svg"); }
+.icon-linkedin { background-image: url("../assets/icons/linkedin.svg"); }
+.icon-mail { background-image: url("../assets/icons/mail.svg"); }
