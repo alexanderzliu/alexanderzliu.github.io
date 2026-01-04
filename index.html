@@ -20,20 +20,25 @@
             margin: 0;
             overflow-x: hidden;
             overflow-y: auto;
-            background-color: var(--bg);
-            /* Raw grid background */
-            background-image: linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px);
-            background-size: 50px 50px;
+            background-color: #0a0a12;
             font-family: 'Space Mono', monospace;
             min-height: 100vh;
             width: 100%;
         }
 
+        /* Retro Grid Background Canvas */
+        #grid-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
         /* --- PHYSICS & BASE WINDOW LOGIC --- */
         .window {
             position: absolute;
-            min-width: 250px;
-            max-width: 350px;
+            min-width: clamp(260px, 20vw, 380px);
+            max-width: clamp(300px, 26vw, 450px);
             min-height: 200px;
             display: flex;
             flex-direction: column;
@@ -437,6 +442,8 @@
 	            border: 1px solid rgba(255, 255, 255, 0.18);
 	            color: white;
 	            font-family: 'Poppins', sans-serif;
+	            min-width: clamp(320px, 26vw, 440px);
+	            max-width: clamp(380px, 32vw, 520px);
 	        }
 	        .style-glass .handle { background: rgba(255,255,255,0.1); border-radius: 10px 10px 0 0; }
 	        .style-glass p { color: rgba(255,255,255,0.9); }
@@ -556,6 +563,8 @@
             color: var(--neu-text);
             border: 1px solid rgba(255, 255, 255, 0.6);
             font-family: 'Poppins', sans-serif;
+            min-width: clamp(280px, 22vw, 360px);
+            max-width: clamp(320px, 26vw, 420px);
         }
         .style-neu .handle {
             position: relative;
@@ -605,7 +614,7 @@
             display: grid;
             place-items: center;
             gap: 10px;
-            padding: 14px 12px;
+            padding: 18px 14px;
             border-radius: 18px;
             background: var(--neu-surface);
             box-shadow: 8px 8px 16px var(--neu-shadow-dark), -8px -8px 16px var(--neu-shadow-light);
@@ -629,8 +638,8 @@
         }
 
         .neu-tile__icon {
-            width: 46px;
-            height: 46px;
+            width: 52px;
+            height: 52px;
             border-radius: 16px;
             display: grid;
             place-items: center;
@@ -639,10 +648,10 @@
         }
         .neu-tile__label {
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             letter-spacing: 0.02em;
         }
-        .neu-tile svg { width: 22px; height: 22px; }
+        .neu-tile svg { width: 26px; height: 26px; }
 
         .neu-tile--resume { --tile-accent: #ff0055; }
         .neu-tile--github { --tile-accent: #111827; }
@@ -681,6 +690,8 @@
 	            color: var(--term-fg);
 	            font-family: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 	            overflow: hidden;
+	            min-width: clamp(340px, 28vw, 460px);
+	            max-width: clamp(400px, 34vw, 540px);
 	        }
 
 	        .style-terminal .handle {
@@ -795,6 +806,7 @@
         /* --- PRACTICE FOOTER --- */
         .practice-footer {
             padding: 56px 16px 80px;
+            display: none;
         }
 
         .practice-footer__inner {
@@ -1044,7 +1056,8 @@
             background: #ccff00;
             box-shadow: 3px 3px 0 #000;
             pointer-events: none;
-            opacity: 0.88;
+            opacity: 0;
+            visibility: hidden;
         }
         .guitar-board.is-strumming .guitar-pick {
             animation: pickStrum 260ms ease-out;
@@ -1195,10 +1208,13 @@
 </head>
 <body>
 
+    <!-- Retro Grid Background -->
+    <canvas id="grid-canvas" aria-hidden="true"></canvas>
+
 	    <main id="stage">
 	        <div id="cursor-trail">IDLE</div>
 
-	    <div class="window style-brutalist" id="hero-window" data-vx="2" data-vy="1" style="top: 20%; left: 10%;">
+	    <div class="window style-brutalist" id="hero-window" data-vx="2" data-vy="1">
 	        <div class="handle">
 	            <span>> WHO_AM_I.exe</span>
 	            <div class="btn-close"></div>
@@ -1212,7 +1228,7 @@
         </div>
     </div>
 
-    <div class="window style-retro" data-vx="-1" data-vy="1.5" style="top: 20%; left: 50%;">
+    <div class="window style-retro" data-vx="-1" data-vy="1.5">
         <div class="scanline"></div>
         <div class="handle">
             <span>SYS_ADMIN</span> <span>[ONLINE]</span>
@@ -1227,7 +1243,7 @@
         </div>
     </div>
 
-    <div class="window style-bauhaus" data-vx="0.5" data-vy="-2" style="top: 50%; left: 20%;">
+    <div class="window style-bauhaus" data-vx="0.5" data-vy="-2">
         <div class="handle">
             <span></span>
             <span class="bau-handle-year">2026</span>
@@ -1249,7 +1265,7 @@
         </div>
     </div>
 
-	    <div class="window style-glass" data-vx="-2" data-vy="-1" style="top: 60%; left: 60%;">
+	    <div class="window style-glass" data-vx="-2" data-vy="-1">
 	        <div class="handle">Experience_Timeline.app</div>
 	        <div class="content">
 	            <h3>Experience Timeline</h3>
@@ -1298,7 +1314,7 @@
 	        </div>
 	    </div>
 
-	    <div class="window style-neu" data-vx="1.5" data-vy="2" style="top: 15%; left: 70%;">
+	    <div class="window style-neu" data-vx="1.5" data-vy="2">
 	        <div class="handle">
 	            <div class="neu-controls" aria-hidden="true">
 	                <span class="neu-dot"></span>
@@ -1356,7 +1372,7 @@
 	        </div>
 	    </div>
 	
-			    <div class="window style-terminal" data-vx="3" data-vy="1" style="top: 70%; left: 10%;">
+			    <div class="window style-terminal" data-vx="3" data-vy="1">
 			        <div class="handle">
 			            <div class="term-controls" aria-hidden="true">
 			                <span class="term-dot term-dot--close"></span>
@@ -1378,7 +1394,7 @@
 	    <footer class="practice-footer" id="practice-footer" aria-label="After-hours practice footer">
 	        <div class="practice-footer__inner">
 	            <header class="practice-footer__header">
-	                <h2 class="practice-footer__title">After-Hours Practice</h2>
+	                <h2 class="practice-footer__title">Secret Fun!</h2>
 	                <p class="practice-footer__subtitle">Hold to sing • Pluck strings • Build combos</p>
 	            </header>
 
@@ -1430,23 +1446,30 @@
 	                            <svg class="thai-fighter__svg" viewBox="0 0 160 92" fill="none">
 	                                <path d="M10 76h140" stroke="#000" stroke-width="4" stroke-linecap="round" opacity="0.25"/>
 	                                <g class="thai-fighter__bounce">
-	                                    <circle cx="52" cy="26" r="12" fill="#ffd1e8" stroke="#000" stroke-width="4"/>
-	                                    <path d="M44 44c10-7 18-7 28 0" fill="#ccff00" stroke="#000" stroke-width="4" stroke-linecap="round"/>
-	                                    <path d="M52 44v22" stroke="#000" stroke-width="4" stroke-linecap="round"/>
-	                                    <path d="M52 66l-14 14" stroke="#000" stroke-width="4" stroke-linecap="round"/>
-	                                    <path d="M52 66l14 14" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                    <!-- Head -->
+	                                    <circle cx="60" cy="22" r="12" fill="#ffd1e8" stroke="#000" stroke-width="4"/>
+	                                    <!-- Shoulders/Tank top -->
+	                                    <path d="M48 38c14-6 24-6 24 0v10H48V38Z" fill="#ccff00" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
+	                                    <!-- Torso -->
+	                                    <path d="M60 48v14" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                    <!-- Standing leg (left, going down) -->
+	                                    <path d="M60 62l-8 14" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                    <!-- Lead arm (right, guard position) -->
 	                                    <g class="thai-fighter__arm thai-fighter__arm--lead">
-	                                        <path d="M52 50l22 2" stroke="#000" stroke-width="4" stroke-linecap="round"/>
-	                                        <circle cx="82" cy="53" r="7" fill="#ff0055" stroke="#000" stroke-width="4"/>
+	                                        <path d="M72 42l14 6" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                        <circle cx="90" cy="50" r="7" fill="#ff0055" stroke="#000" stroke-width="4"/>
 	                                    </g>
+	                                    <!-- Rear arm (left, guard position) -->
 	                                    <g class="thai-fighter__arm thai-fighter__arm--rear">
-	                                        <path d="M52 50l-20 8" stroke="#000" stroke-width="4" stroke-linecap="round"/>
-	                                        <circle cx="24" cy="61" r="7" fill="#ff0055" stroke="#000" stroke-width="4"/>
+	                                        <path d="M48 42l-10 10" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                        <circle cx="34" cy="56" r="7" fill="#ff0055" stroke="#000" stroke-width="4"/>
 	                                    </g>
+	                                    <!-- Kick leg (right, chambered/kicking) -->
 	                                    <g class="thai-fighter__leg thai-fighter__leg--kick">
-	                                        <path d="M52 66l26-6" stroke="#000" stroke-width="4" stroke-linecap="round"/>
-	                                        <path d="M78 60l14 6" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                        <path d="M60 62l10-4" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+	                                        <path d="M70 58l16 4" stroke="#000" stroke-width="4" stroke-linecap="round"/>
 	                                    </g>
+	                                    <!-- Impact spark -->
 	                                    <g class="thai-fighter__spark">
 	                                        <path d="M118 44l4 8 8 4-8 4-4 8-4-8-8-4 8-4 4-8Z" fill="#ccff00" stroke="#000" stroke-width="3"/>
 	                                    </g>
@@ -1508,6 +1531,52 @@
 	        let lastX = 0, lastY = 0;
 	        let speedX = 0, speedY = 0;
 	        let physicsStarted = false;
+
+	        // --- ARRANGE WINDOWS IN RESPONSIVE GRID ---
+	        function arrangeWindows() {
+	            const vw = bounds.w;
+	            const vh = bounds.h;
+	            const winArray = Array.from(windows);
+	            const padding = Math.min(vw, vh) * 0.03; // 3% padding from edges
+
+	            // Measure actual window dimensions
+	            const windowSizes = winArray.map(win => ({
+	                el: win,
+	                w: win.offsetWidth,
+	                h: win.offsetHeight
+	            }));
+
+	            // Calculate grid layout: 3 columns x 2 rows
+	            const cols = vw > 900 ? 3 : 2;
+	            const rows = Math.ceil(winArray.length / cols);
+
+	            // Calculate cell dimensions
+	            const cellW = (vw - padding * 2) / cols;
+	            const cellH = (vh - padding * 2) / rows;
+
+	            // Position each window in its cell with slight offset for visual interest
+	            windowSizes.forEach((item, i) => {
+	                const col = i % cols;
+	                const row = Math.floor(i / cols);
+
+	                // Center window in its cell
+	                const cellX = padding + col * cellW;
+	                const cellY = padding + row * cellH;
+
+	                // Center within cell, with small random offset for organic feel
+	                const offsetX = (cellW - item.w) / 2 + (Math.random() - 0.5) * 20;
+	                const offsetY = (cellH - item.h) / 2 + (Math.random() - 0.5) * 20;
+
+	                const x = Math.max(padding, Math.min(cellX + offsetX, vw - item.w - padding));
+	                const y = Math.max(padding, Math.min(cellY + offsetY, vh - item.h - padding));
+
+	                item.el.style.left = x + 'px';
+	                item.el.style.top = y + 'px';
+	            });
+	        }
+
+	        // Run initial arrangement
+	        arrangeWindows();
 
 	        // Initialize positions (paused) & store initial velocities
 	        windows.forEach(win => {
@@ -1603,8 +1672,85 @@
             });
         });
 
+        // --- GRID CANVAS WITH WARP EFFECT ---
+        const gridCanvas = document.getElementById('grid-canvas');
+        const gridCtx = gridCanvas.getContext('2d');
+        const gridSize = 40;
+        const warpRadius = 180;
+        const warpStrength = 25;
+        let mouseX = -1000, mouseY = -1000;
+
+        function resizeCanvas() {
+            gridCanvas.width = window.innerWidth;
+            gridCanvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function warpPoint(x, y) {
+            const dx = x - mouseX;
+            const dy = y - mouseY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < warpRadius && dist > 0) {
+                const factor = (1 - dist / warpRadius) * warpStrength;
+                const angle = Math.atan2(dy, dx);
+                return {
+                    x: x + Math.cos(angle) * factor,
+                    y: y + Math.sin(angle) * factor
+                };
+            }
+            return { x, y };
+        }
+
+        function drawGrid() {
+            const w = gridCanvas.width;
+            const h = gridCanvas.height;
+
+            gridCtx.fillStyle = '#000';
+            gridCtx.fillRect(0, 0, w, h);
+
+            gridCtx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            gridCtx.lineWidth = 1;
+
+            // Draw horizontal lines
+            for (let y = 0; y <= h + gridSize; y += gridSize) {
+                gridCtx.beginPath();
+                for (let x = 0; x <= w; x += 4) {
+                    const warped = warpPoint(x, y);
+                    if (x === 0) {
+                        gridCtx.moveTo(warped.x, warped.y);
+                    } else {
+                        gridCtx.lineTo(warped.x, warped.y);
+                    }
+                }
+                gridCtx.stroke();
+            }
+
+            // Draw vertical lines
+            for (let x = 0; x <= w + gridSize; x += gridSize) {
+                gridCtx.beginPath();
+                for (let y = 0; y <= h; y += 4) {
+                    const warped = warpPoint(x, y);
+                    if (y === 0) {
+                        gridCtx.moveTo(warped.x, warped.y);
+                    } else {
+                        gridCtx.lineTo(warped.x, warped.y);
+                    }
+                }
+                gridCtx.stroke();
+            }
+
+            requestAnimationFrame(drawGrid);
+        }
+        drawGrid();
+
         // MOUSE MOVE
         document.addEventListener('mousemove', (e) => {
+            // Update grid warp mouse position
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
             // Update custom cursor
             const cursor = document.getElementById('cursor-trail');
             cursor.style.left = (e.clientX + 15) + 'px';
