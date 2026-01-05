@@ -46,6 +46,14 @@
     transition: none !important;
 }
 
+/* Intermediate state for two-phase open animation (prevents flash) */
+.window.is-opening {
+    opacity: 0 !important;
+    transform: scale(0.88) translateY(12px) !important;
+    visibility: visible !important;
+    pointer-events: none;
+}
+
 /* Subtle shadow lift when window is focused/active */
 .window.is-open:hover {
     box-shadow: 3px 3px 0 0 var(--pure-black);
@@ -54,6 +62,11 @@
 /* Staggered page load animation for main system folder window */
 #window-system-folder.is-open {
     animation: windowEnter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+}
+
+/* Disable page-load animation when opened via boot sequence */
+#window-system-folder.boot-opened.is-open {
+    animation: none;
 }
 
 @keyframes windowEnter {

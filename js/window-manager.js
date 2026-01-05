@@ -37,6 +37,31 @@ document.querySelectorAll('.folder-icon[data-window]').forEach(icon => {
     });
 });
 
+// Desktop icon click handlers (opens windows with animation)
+document.querySelectorAll('.desktop-icon[data-window]').forEach(icon => {
+    icon.addEventListener('click', e => {
+        e.preventDefault();
+
+        const win = document.getElementById('window-' + icon.dataset.window);
+
+        if (win.classList.contains('is-open')) {
+            win.style.zIndex = ++zIndex;
+            return;
+        }
+
+        // Two-phase animation to prevent flash
+        win.classList.add('is-opening');
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                win.classList.remove('is-opening');
+                win.classList.add('is-open');
+                win.style.zIndex = ++zIndex;
+            });
+        });
+    });
+});
+
 // Close button handlers
 document.querySelectorAll('[data-close]').forEach(btn => {
     btn.addEventListener('click', e => {

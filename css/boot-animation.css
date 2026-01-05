@@ -1,0 +1,180 @@
+/* ============================================
+   BOOT ANIMATION - Terminal startup sequence
+============================================ */
+
+/* Boot Screen Overlay */
+.boot-screen {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s ease-out, visibility 0s linear 0s;
+}
+
+.boot-screen--hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-out, visibility 0s linear 0.5s;
+}
+
+/* Terminal Container */
+.boot-screen__terminal {
+    width: 90%;
+    max-width: 500px;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Terminal Lines */
+.boot-screen__line {
+    color: #33ff33;
+    opacity: 0;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.boot-screen__line--visible {
+    opacity: 1;
+}
+
+.boot-screen__line--typing {
+    animation: typing 0.6s steps(30, end) forwards;
+    border-right: 2px solid #33ff33;
+}
+
+.boot-screen__line--typed {
+    border-right: none;
+}
+
+/* Blinking cursor on last active line */
+.boot-screen__line--cursor {
+    border-right: 2px solid #33ff33;
+    animation: blink 0.8s step-end infinite;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes blink {
+    0%, 100% {
+        border-color: #33ff33;
+    }
+    50% {
+        border-color: transparent;
+    }
+}
+
+/* Progress Bar */
+.boot-screen__progress {
+    margin-top: 24px;
+    height: 20px;
+    background: #111;
+    border: 1px solid #33ff33;
+    border-radius: 2px;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.boot-screen__progress--visible {
+    opacity: 1;
+}
+
+.boot-screen__progress-bar {
+    height: 100%;
+    width: 0;
+    background: #33ff33;
+    transition: width 1s ease-in-out;
+}
+
+.boot-screen__progress-bar--filling {
+    width: 100%;
+}
+
+/* Desktop & Menu Bar Hidden State */
+.desktop--hidden,
+.menu-bar--hidden {
+    opacity: 0;
+    animation: none !important;
+}
+
+.desktop--revealing,
+.menu-bar--revealing {
+    animation: desktopReveal 0.4s ease-out forwards;
+}
+
+@keyframes desktopReveal {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Animated Cursor */
+.boot-cursor {
+    position: fixed;
+    width: 16px;
+    height: 20px;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20"><polygon fill="%23000" stroke="%23fff" stroke-width="1" points="0,0 0,16 4,12 7,19 9,18 6,11 12,11"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+}
+
+.boot-cursor--visible {
+    opacity: 1;
+}
+
+.boot-cursor--moving {
+    transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                top 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.boot-cursor--clicking {
+    animation: cursorClick 0.15s ease-in-out;
+}
+
+@keyframes cursorClick {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(0.85);
+    }
+}
+
+.boot-cursor--hidden {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+}
+
+/* Scanline effect (subtle) */
+.boot-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1) 0px,
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+}
