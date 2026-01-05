@@ -8,6 +8,12 @@ document.querySelectorAll('.folder-icon[data-window]').forEach(icon => {
     icon.addEventListener('click', e => {
         e.preventDefault();
 
+        // Skip if this was a drag operation
+        if (window.iconDragOccurred) {
+            window.iconDragOccurred = false;
+            return;
+        }
+
         const win = document.getElementById('window-' + icon.dataset.window);
 
         if (win.classList.contains('is-open')) {
@@ -41,6 +47,12 @@ document.querySelectorAll('.folder-icon[data-window]').forEach(icon => {
 document.querySelectorAll('.desktop-icon[data-window]').forEach(icon => {
     icon.addEventListener('click', e => {
         e.preventDefault();
+
+        // Skip if this was a drag operation
+        if (window.iconDragOccurred) {
+            window.iconDragOccurred = false;
+            return;
+        }
 
         const win = document.getElementById('window-' + icon.dataset.window);
 
