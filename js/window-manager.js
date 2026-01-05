@@ -3,18 +3,9 @@ let zIndex = 100;
 let dragging = null;
 let dragOffset = { x: 0, y: 0 };
 
-// Folder icon click handlers (double-click to open)
+// Folder icon click handlers (single-click to open)
 document.querySelectorAll('.folder-icon[data-window]').forEach(icon => {
-    // Single click to select
     icon.addEventListener('click', e => {
-        e.preventDefault();
-        // Deselect all icons
-        document.querySelectorAll('.folder-icon').forEach(i => i.classList.remove('selected'));
-        icon.classList.add('selected');
-    });
-
-    // Double click to open window
-    icon.addEventListener('dblclick', e => {
         e.preventDefault();
 
         const win = document.getElementById('window-' + icon.dataset.window);
@@ -98,9 +89,3 @@ document.querySelectorAll('.window').forEach(win => {
     });
 });
 
-// Deselect icons when clicking outside
-document.addEventListener('click', e => {
-    if (!e.target.closest('.folder-icon')) {
-        document.querySelectorAll('.folder-icon').forEach(i => i.classList.remove('selected'));
-    }
-});
