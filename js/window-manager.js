@@ -42,7 +42,31 @@ document.querySelectorAll('[data-close]').forEach(btn => {
     btn.addEventListener('click', e => {
         e.stopPropagation();
         const win = btn.closest('.window');
-        win.classList.remove('is-open');
+        win.classList.remove('is-open', 'is-zoomed');
+    });
+});
+
+// Zoom button handlers
+document.querySelectorAll('.window__zoom').forEach(btn => {
+    btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const win = btn.closest('.window');
+
+        if (win.classList.contains('is-zoomed')) {
+            // Restore previous size/position
+            win.style.cssText = win.dataset.preZoom;
+            win.classList.remove('is-zoomed');
+        } else {
+            // Save current state, zoom to fill screen
+            win.dataset.preZoom = win.style.cssText;
+            Object.assign(win.style, {
+                left: '10px',
+                top: '30px',
+                width: `${window.innerWidth - 20}px`,
+                height: `${window.innerHeight - 60}px`
+            });
+            win.classList.add('is-zoomed');
+        }
     });
 });
 
@@ -54,6 +78,7 @@ document.querySelectorAll('.window__titlebar').forEach(titlebar => {
 
         const win = titlebar.closest('.window');
         dragging = win;
+        win.classList.add('is-dragging');
         win.style.zIndex = ++zIndex;
 
         const rect = win.getBoundingClientRect();
@@ -79,6 +104,7 @@ document.addEventListener('mousemove', e => {
 });
 
 document.addEventListener('mouseup', () => {
+    if (dragging) dragging.classList.remove('is-dragging');
     dragging = null;
 });
 
