@@ -9,13 +9,53 @@
     border: 1px solid var(--pure-black);
     box-shadow:
         2px 2px 0 0 var(--pure-black);
-    display: none;
+    display: flex;
     flex-direction: column;
     z-index: 100;
+    /* Hidden by default with animation-ready state */
+    opacity: 0;
+    transform: scale(0.88) translateY(12px);
+    pointer-events: none;
+    visibility: hidden;
+    /* Smooth open/close transitions */
+    transition:
+        opacity 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+        transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+        visibility 0s linear 0.2s,
+        box-shadow 0.15s ease-out;
 }
 
 .window.is-open {
-    display: flex;
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: auto;
+    visibility: visible;
+    transition:
+        opacity 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+        transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+        visibility 0s linear 0s,
+        box-shadow 0.15s ease-out;
+}
+
+/* Subtle shadow lift when window is focused/active */
+.window.is-open:hover {
+    box-shadow: 3px 3px 0 0 var(--pure-black);
+}
+
+/* Staggered page load animation for main system folder window */
+#window-system-folder.is-open {
+    animation: windowEnter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+}
+
+@keyframes windowEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.85) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 /* PINSTRIPE TITLE BAR - Horizontal lines */
@@ -78,19 +118,18 @@
 }
 
 .window__title {
-    flex: 1;
     text-align: center;
     font-size: 16px;
     font-family: 'Silkscreen', 'Chicago', monospace;
     font-weight: 700;
     color: var(--pure-black);
-    padding: 4px 16px;
+    padding: 4px 12px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     /* White background behind title for readability */
     background: var(--pure-white);
-    margin: 0 10px;
+    margin: 0 auto;
     line-height: 22px;
 }
 

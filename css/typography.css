@@ -32,6 +32,8 @@
 .window__content a {
     color: var(--pure-black);
     text-decoration: underline;
+    /* Smooth hover transition */
+    transition: background-color 0.1s ease-out, color 0.1s ease-out;
 }
 
 .window__content a:hover {
@@ -111,6 +113,13 @@
     margin-bottom: 12px;
     background: var(--pure-white);
     border: 1px solid var(--pure-black);
+    /* Subtle hover lift effect */
+    transition: box-shadow 0.15s ease-out, transform 0.15s ease-out;
+}
+
+.timeline__item:hover {
+    box-shadow: 2px 2px 0 0 var(--pure-black);
+    transform: translateY(-1px);
 }
 
 .timeline__date {
