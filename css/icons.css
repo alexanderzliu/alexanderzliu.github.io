@@ -157,3 +157,30 @@
     background: var(--pure-black);
     color: var(--pure-white);
 }
+
+/* ============================================
+   ICON DRAG STATES
+============================================ */
+
+/* Dragging state for all icons */
+.desktop-icon.is-dragging,
+.folder-icon.is-dragging {
+    cursor: grabbing;
+    z-index: 1000;
+    user-select: none;
+}
+
+.desktop-icon.is-dragging *,
+.folder-icon.is-dragging * {
+    pointer-events: none;
+}
+
+/* Folder icons that have been dragged get absolute positioning */
+.folder-icon--positioned {
+    position: absolute;
+}
+
+/* Ensure folder-icons container can hold absolutely positioned items */
+.folder-icons {
+    position: relative;
+}
