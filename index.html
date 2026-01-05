@@ -35,11 +35,33 @@
     <!-- Menu Bar -->
     <div class="menu-bar menu-bar--hidden">
         <div class="menu-bar__left">
-            <span class="menu-bar__item">File</span>
-            <span class="menu-bar__item">Edit</span>
-            <span class="menu-bar__item">View</span>
-            <span class="menu-bar__item">Label</span>
-            <span class="menu-bar__item">Special</span>
+            <div class="menu-bar__item" data-menu="file">
+                File
+                <div class="menu-dropdown">
+                    <button class="menu-dropdown__item" data-action="close-all">Close All</button>
+                </div>
+            </div>
+            <div class="menu-bar__item" data-menu="edit">
+                Edit
+                <div class="menu-dropdown">
+                    <button class="menu-dropdown__item" data-action="undo">Undo</button>
+                    <button class="menu-dropdown__item" data-action="redo">Redo</button>
+                </div>
+            </div>
+            <div class="menu-bar__item" data-menu="view">
+                View
+                <div class="menu-dropdown">
+                    <button class="menu-dropdown__item" data-action="zoom-in">Zoom In</button>
+                    <button class="menu-dropdown__item" data-action="zoom-out">Zoom Out</button>
+                    <button class="menu-dropdown__item" data-action="zoom-reset">Reset Zoom</button>
+                </div>
+            </div>
+            <div class="menu-bar__item" data-menu="special">
+                Special
+                <div class="menu-dropdown">
+                    <button class="menu-dropdown__item" data-action="quote">Quote</button>
+                </div>
+            </div>
         </div>
         <div class="menu-bar__right">
             <span id="menu-clock"></span>
@@ -265,6 +287,21 @@
                 </div>
             </div>
         </div>
+
+        <!-- Quote Window -->
+        <div class="window" id="window-quote" style="width: 400px; min-height: 180px;">
+            <div class="window__titlebar">
+                <div class="window__close" data-close></div>
+                <span class="window__title">Quote</span>
+                <div class="window__zoom"></div>
+            </div>
+            <div class="window__body">
+                <div class="window__content" style="text-align: center; padding: 24px;">
+                    <p id="quote-text" style="font-size: 16px; font-style: italic; margin-bottom: 16px;"></p>
+                    <p id="quote-author" style="font-size: 14px;"></p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- JavaScript Modules -->
@@ -275,5 +312,7 @@
     <script src="js/icon-drag.js"></script>
     <script src="js/resize.js"></script>
     <script src="js/lastfm.js"></script>
+    <script src="js/quotes.js"></script>
+    <script src="js/menu.js"></script>
 </body>
 </html>
