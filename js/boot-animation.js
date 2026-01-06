@@ -49,7 +49,9 @@
     function typeMessage(element, text, speed = 30) {
         return new Promise(resolve => {
             let i = 0;
-            element.classList.add('boot-screen__line--visible');
+            element.textContent = '';
+            element.classList.add('boot-screen__line--visible', 'boot-screen__line--typing');
+            element.classList.remove('boot-screen__line--cursor');
 
             function type() {
                 if (i < text.length) {
@@ -57,6 +59,7 @@
                     i++;
                     setTimeout(type, speed);
                 } else {
+                    element.classList.remove('boot-screen__line--typing');
                     resolve();
                 }
             }
@@ -154,7 +157,11 @@
 
         // Type each message with delays
         for (let i = 0; i < messages.length; i++) {
+            lines.forEach(line => line.classList.remove('boot-screen__line--cursor'));
             await typeMessage(lines[i], messages[i], 25);
+            if (i === messages.length - 1) {
+                lines[i].classList.add('boot-screen__line--cursor');
+            }
             await delay(400);
         }
 
