@@ -126,42 +126,47 @@
     }
 
     /* ----------------------------------------
-       MUSIC WIDGET - Compact for mobile
+       MUSIC WIDGET - Short and wide for mobile
     ---------------------------------------- */
     .music-widget.is-open {
         left: 8px !important;
         bottom: 56px !important;
         top: auto !important;
-        width: auto !important;
-        max-width: 180px !important;
+        width: calc(100vw - 16px) !important;
+        max-width: 280px !important;
     }
 
     .music-widget .music-widget__content {
-        padding: 6px;
-        gap: 4px;
+        padding: 8px;
+        gap: 0;
+        flex-direction: row;
+        align-items: center;
     }
 
     .music-widget .music-widget__album {
-        width: 80px;
-        height: 80px;
-        margin: 0 auto;
+        width: 50px;
+        height: 50px;
+        flex-shrink: 0;
+        margin-right: 10px;
+    }
+
+    .music-widget .music-widget__info {
+        flex: 1;
+        text-align: left;
+        min-width: 0;
     }
 
     .music-widget .music-widget__track {
-        font-size: 10px;
+        font-size: 11px;
+        margin-bottom: 2px;
     }
 
     .music-widget .music-widget__artist {
-        font-size: 9px;
+        font-size: 10px;
     }
 
     .music-widget .music-widget__status {
-        padding-top: 4px;
-    }
-
-    .music-widget .music-widget__live-indicator,
-    .music-widget .music-widget__lastfm-link {
-        font-size: 8px;
+        display: none;
     }
 }
 
