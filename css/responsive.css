@@ -43,23 +43,26 @@
     .folder-icons {
         grid-template-columns: repeat(2, 1fr) !important;
         column-gap: 8px;
-        row-gap: 24px;
-        padding: 16px;
+        row-gap: 16px;
+        padding: 12px 16px;
+        align-content: start;
     }
 
     .folder-icon {
-        padding: 8px;
+        padding: 6px;
     }
 
     .folder-icon__image {
-        width: 48px;
-        height: 48px;
+        width: 40px;
+        height: 40px;
+        margin-bottom: 4px;
     }
 
     .folder-icon__label {
-        font-size: 12px;
-        max-width: 100px;
-        padding: 4px 6px;
+        font-size: 11px;
+        max-width: 90px;
+        padding: 3px 5px;
+        line-height: 1.2;
     }
 
     /* ----------------------------------------
@@ -86,8 +89,19 @@
     /* ----------------------------------------
        MENU BAR - Touch-friendly sizing
     ---------------------------------------- */
+    .menu-bar {
+        padding: 0 8px;
+    }
+
     .menu-bar__item {
-        padding: 2px 8px;
+        padding: 2px 6px;
+        font-size: 12px;
+    }
+
+    .menu-bar__right {
+        font-size: 12px;
+        min-width: 70px;
+        text-align: right;
     }
 
     .menu-dropdown__item {
@@ -119,7 +133,25 @@
         bottom: 56px !important;
         top: auto !important;
         width: calc(100vw - 16px) !important;
-        max-width: 280px !important;
+        max-width: 240px !important;
+        max-height: calc(100vh - 120px) !important;
+    }
+
+    .music-widget .music-widget__content {
+        padding: 8px;
+        gap: 6px;
+    }
+
+    .music-widget .music-widget__album {
+        max-height: 150px;
+    }
+
+    .music-widget .music-widget__track {
+        font-size: 12px;
+    }
+
+    .music-widget .music-widget__artist {
+        font-size: 10px;
     }
 }
 
