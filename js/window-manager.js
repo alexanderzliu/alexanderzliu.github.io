@@ -3,52 +3,11 @@ let zIndex = 100;
 let dragging = null;
 let dragOffset = { x: 0, y: 0 };
 
-// Folder icon click handlers (single-click to open)
-document.querySelectorAll('.folder-icon[data-window]').forEach(icon => {
+// Icon click handlers - opens associated windows
+document.querySelectorAll('[data-window]').forEach(icon => {
     icon.addEventListener('click', e => {
         e.preventDefault();
 
-        // Skip if this was a drag operation
-        if (window.iconDragOccurred) {
-            window.iconDragOccurred = false;
-            return;
-        }
-
-        const win = document.getElementById('window-' + icon.dataset.window);
-
-        if (win.classList.contains('is-open')) {
-            // Bring to front
-            win.style.zIndex = ++zIndex;
-            return;
-        }
-
-        // Position window offset from System Folder
-        const systemFolder = document.getElementById('window-system-folder');
-        const folderRect = systemFolder.getBoundingClientRect();
-        let left = folderRect.left + 30;
-        let top = folderRect.top + 40;
-
-        // Make sure it fits on screen
-        if (left + 400 > window.innerWidth) {
-            left = Math.max(20, window.innerWidth - 420);
-        }
-        if (top + 300 > window.innerHeight) {
-            top = Math.max(50, window.innerHeight - 350);
-        }
-
-        win.style.left = left + 'px';
-        win.style.top = top + 'px';
-        win.classList.add('is-open');
-        win.style.zIndex = ++zIndex;
-    });
-});
-
-// Desktop icon click handlers (opens windows with animation)
-document.querySelectorAll('.desktop-icon[data-window]').forEach(icon => {
-    icon.addEventListener('click', e => {
-        e.preventDefault();
-
-        // Skip if this was a drag operation
         if (window.iconDragOccurred) {
             window.iconDragOccurred = false;
             return;
@@ -61,9 +20,25 @@ document.querySelectorAll('.desktop-icon[data-window]').forEach(icon => {
             return;
         }
 
-        // Two-phase animation to prevent flash
+        // Folder icons: position relative to System Folder
+        if (icon.classList.contains('folder-icon')) {
+            const systemFolder = document.getElementById('window-system-folder');
+            const folderRect = systemFolder.getBoundingClientRect();
+            let left = folderRect.left + 30;
+            let top = folderRect.top + 40;
+
+            if (left + 400 > window.innerWidth) left = Math.max(20, window.innerWidth - 420);
+            if (top + 300 > window.innerHeight) top = Math.max(50, window.innerHeight - 350);
+
+            win.style.left = left + 'px';
+            win.style.top = top + 'px';
+            win.classList.add('is-open');
+            win.style.zIndex = ++zIndex;
+            return;
+        }
+
+        // Desktop icons: two-phase animation to prevent flash
         win.classList.add('is-opening');
-
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 win.classList.remove('is-opening');
@@ -107,9 +82,9 @@ document.querySelectorAll('.window__zoom').forEach(btn => {
     });
 });
 
-// Window dragging
+// Window dragging - with touch support
 document.querySelectorAll('.window__titlebar').forEach(titlebar => {
-    titlebar.addEventListener('mousedown', e => {
+    function handleDragStart(e) {
         if (e.target.classList.contains('window__close') ||
             e.target.classList.contains('window__zoom')) return;
 
@@ -118,19 +93,24 @@ document.querySelectorAll('.window__titlebar').forEach(titlebar => {
         win.classList.add('is-dragging');
         win.style.zIndex = ++zIndex;
 
+        const point = TouchUtils.getPoint(e);
         const rect = win.getBoundingClientRect();
-        dragOffset.x = e.clientX - rect.left;
-        dragOffset.y = e.clientY - rect.top;
+        dragOffset.x = point.x - rect.left;
+        dragOffset.y = point.y - rect.top;
 
         e.preventDefault();
-    });
+    }
+
+    titlebar.addEventListener('mousedown', handleDragStart);
+    titlebar.addEventListener('touchstart', handleDragStart, { passive: false });
 });
 
-document.addEventListener('mousemove', e => {
+function handleDragMove(e) {
     if (!dragging) return;
 
-    let x = e.clientX - dragOffset.x;
-    let y = e.clientY - dragOffset.y;
+    const point = TouchUtils.getPoint(e);
+    let x = point.x - dragOffset.x;
+    let y = point.y - dragOffset.y;
 
     // Constrain to screen
     x = Math.max(0, Math.min(x, window.innerWidth - dragging.offsetWidth));
@@ -138,12 +118,19 @@ document.addEventListener('mousemove', e => {
 
     dragging.style.left = x + 'px';
     dragging.style.top = y + 'px';
-});
+}
 
-document.addEventListener('mouseup', () => {
+document.addEventListener('mousemove', handleDragMove);
+document.addEventListener('touchmove', handleDragMove, { passive: false });
+
+function handleDragEnd() {
     if (dragging) dragging.classList.remove('is-dragging');
     dragging = null;
-});
+}
+
+document.addEventListener('mouseup', handleDragEnd);
+document.addEventListener('touchend', handleDragEnd);
+document.addEventListener('touchcancel', handleDragEnd);
 
 // Bring window to front on click
 document.querySelectorAll('.window').forEach(win => {

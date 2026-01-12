@@ -1,17 +1,32 @@
-// Icon dragging functionality
+// Icon dragging functionality with touch support
 let draggingIcon = null;
 let iconDragOffset = { x: 0, y: 0 };
 let iconStartPos = { x: 0, y: 0 };
 let iconHasMoved = false;
 const ICON_DRAG_THRESHOLD = 5;
 
+// Long-press state for touch
+let longPressTimer = null;
+let longPressTriggered = false;
+const LONG_PRESS_DELAY = 500;
+
 // Track if a drag just occurred (to prevent click)
 window.iconDragOccurred = false;
+
+function getDistanceFromStart(point) {
+    const dx = point.x - iconStartPos.x;
+    const dy = point.y - iconStartPos.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
 
 // Initialize drag handlers for all icons
 function initIconDrag() {
     document.querySelectorAll('.desktop-icon, .folder-icon').forEach(icon => {
+        // Mouse: immediate drag
         icon.addEventListener('mousedown', handleMouseDown);
+
+        // Touch: long-press to initiate drag
+        icon.addEventListener('touchstart', handleTouchStart, { passive: false });
 
         // Prevent link navigation after drag for <a> tags
         if (icon.tagName === 'A') {
@@ -46,57 +61,77 @@ function handleMouseDown(e) {
     e.preventDefault();
 }
 
-document.addEventListener('mousemove', e => {
+function handleTouchStart(e) {
+    const icon = e.currentTarget;
+    longPressTriggered = false;
+
+    const point = TouchUtils.getPoint(e);
+    iconStartPos.x = point.x;
+    iconStartPos.y = point.y;
+
+    const rect = icon.getBoundingClientRect();
+    iconDragOffset.x = point.x - rect.left;
+    iconDragOffset.y = point.y - rect.top;
+
+    // Start long-press timer
+    longPressTimer = setTimeout(() => {
+        longPressTriggered = true;
+        draggingIcon = icon;
+        iconHasMoved = false;
+        icon.classList.add('is-long-pressing');
+
+        // Haptic feedback if available
+        if (navigator.vibrate) navigator.vibrate(50);
+    }, LONG_PRESS_DELAY);
+}
+
+// Shared function to initialize folder icon absolute positioning
+function initializeFolderIconPositioning() {
+    if (!draggingIcon || !draggingIcon.classList.contains('folder-icon')) return;
+
+    const container = draggingIcon.closest('.folder-icons');
+    if (!container || container.classList.contains('folder-icons--positioned')) return;
+
+    // Convert ALL icons in container to absolute positioning
+    // This prevents grid reflow when one icon is moved
+    const icons = container.querySelectorAll('.folder-icon');
+    const containerRect = container.getBoundingClientRect();
+
+    // Step 1: Capture ALL positions before any DOM changes
+    const positions = Array.from(icons).map(icon => {
+        const rect = icon.getBoundingClientRect();
+        return {
+            icon,
+            left: rect.left - containerRect.left,
+            top: rect.top - containerRect.top
+        };
+    });
+
+    // Step 2: Apply positions to all icons
+    positions.forEach(({ icon, left, top }) => {
+        icon.style.left = left + 'px';
+        icon.style.top = top + 'px';
+        icon.classList.add('folder-icon--positioned');
+    });
+
+    container.classList.add('folder-icons--positioned');
+}
+
+// Shared function to activate drag mode
+function activateDragMode() {
+    iconHasMoved = true;
+    window.iconDragOccurred = true;
+    draggingIcon.classList.remove('is-long-pressing');
+    draggingIcon.classList.add('is-dragging');
+    initializeFolderIconPositioning();
+}
+
+// Shared function to position the dragging icon
+function positionDraggingIcon(point) {
     if (!draggingIcon) return;
 
-    const dx = e.clientX - iconStartPos.x;
-    const dy = e.clientY - iconStartPos.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-
-    // Check if we've moved past the drag threshold
-    if (!iconHasMoved && distance < ICON_DRAG_THRESHOLD) return;
-
-    if (!iconHasMoved) {
-        // First time crossing threshold - initialize drag
-        iconHasMoved = true;
-        window.iconDragOccurred = true;
-        draggingIcon.classList.add('is-dragging');
-
-        // For folder icons, convert ALL icons in container to absolute positioning
-        // This prevents grid reflow when one icon is moved
-        if (draggingIcon.classList.contains('folder-icon')) {
-            const container = draggingIcon.closest('.folder-icons');
-
-            if (!container.classList.contains('folder-icons--positioned')) {
-                // First drag in this container - position all icons absolutely
-                const icons = container.querySelectorAll('.folder-icon');
-                const containerRect = container.getBoundingClientRect();
-
-                // Step 1: Capture ALL positions before any DOM changes
-                const positions = Array.from(icons).map(icon => {
-                    const rect = icon.getBoundingClientRect();
-                    return {
-                        icon,
-                        left: rect.left - containerRect.left,
-                        top: rect.top - containerRect.top
-                    };
-                });
-
-                // Step 2: Apply positions to all icons
-                positions.forEach(({ icon, left, top }) => {
-                    icon.style.left = left + 'px';
-                    icon.style.top = top + 'px';
-                    icon.classList.add('folder-icon--positioned');
-                });
-
-                container.classList.add('folder-icons--positioned');
-            }
-        }
-    }
-
-    // Calculate new position
-    let x = e.clientX - iconDragOffset.x;
-    let y = e.clientY - iconDragOffset.y;
+    let x = point.x - iconDragOffset.x;
+    let y = point.y - iconDragOffset.y;
 
     // Constrain based on icon type
     if (draggingIcon.classList.contains('desktop-icon')) {
@@ -114,8 +149,8 @@ document.addEventListener('mousemove', e => {
         const containerRect = container.getBoundingClientRect();
 
         // Convert to container-relative coordinates
-        const relX = e.clientX - containerRect.left - iconDragOffset.x;
-        const relY = e.clientY - containerRect.top - iconDragOffset.y;
+        const relX = point.x - iconDragOffset.x - containerRect.left;
+        const relY = point.y - iconDragOffset.y - containerRect.top;
 
         // Constrain to container bounds
         const maxX = container.offsetWidth - draggingIcon.offsetWidth;
@@ -124,15 +159,61 @@ document.addEventListener('mousemove', e => {
         draggingIcon.style.left = Math.max(0, Math.min(relX, maxX)) + 'px';
         draggingIcon.style.top = Math.max(0, Math.min(relY, maxY)) + 'px';
     }
-});
+}
 
-document.addEventListener('mouseup', () => {
+function handleTouchMove(e) {
+    const point = TouchUtils.getPoint(e);
+    const distance = getDistanceFromStart(point);
+
+    // Cancel long-press if moved before timer fires
+    if (!longPressTriggered && distance > ICON_DRAG_THRESHOLD) {
+        clearTimeout(longPressTimer);
+        return;
+    }
+
+    // Only drag if long-press activated
+    if (!longPressTriggered || !draggingIcon) return;
+
+    e.preventDefault();
+
+    if (!iconHasMoved) {
+        activateDragMode();
+    }
+
+    positionDraggingIcon(point);
+}
+
+function handleIconDragEnd() {
+    clearTimeout(longPressTimer);
     if (draggingIcon) {
-        draggingIcon.classList.remove('is-dragging');
+        draggingIcon.classList.remove('is-dragging', 'is-long-pressing');
         draggingIcon = null;
     }
+    longPressTriggered = false;
     iconHasMoved = false;
-});
+}
+
+function handleMouseMove(e) {
+    if (!draggingIcon) return;
+
+    const point = { x: e.clientX, y: e.clientY };
+    const distance = getDistanceFromStart(point);
+
+    if (!iconHasMoved && distance < ICON_DRAG_THRESHOLD) return;
+
+    if (!iconHasMoved) {
+        activateDragMode();
+    }
+
+    positionDraggingIcon(point);
+}
+
+// Global event handlers
+document.addEventListener('mousemove', handleMouseMove);
+document.addEventListener('touchmove', handleTouchMove, { passive: false });
+document.addEventListener('mouseup', handleIconDragEnd);
+document.addEventListener('touchend', handleIconDragEnd);
+document.addEventListener('touchcancel', handleIconDragEnd);
 
 // Initialize when DOM is ready
 initIconDrag();
