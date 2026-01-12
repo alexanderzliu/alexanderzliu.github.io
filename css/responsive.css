@@ -126,32 +126,42 @@
     }
 
     /* ----------------------------------------
-       MUSIC WIDGET - Stack above control strip
+       MUSIC WIDGET - Compact for mobile
     ---------------------------------------- */
     .music-widget.is-open {
         left: 8px !important;
         bottom: 56px !important;
         top: auto !important;
-        width: calc(100vw - 16px) !important;
-        max-width: 240px !important;
-        max-height: calc(100vh - 120px) !important;
+        width: auto !important;
+        max-width: 180px !important;
     }
 
     .music-widget .music-widget__content {
-        padding: 8px;
-        gap: 6px;
+        padding: 6px;
+        gap: 4px;
     }
 
     .music-widget .music-widget__album {
-        max-height: 150px;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
     }
 
     .music-widget .music-widget__track {
-        font-size: 12px;
+        font-size: 10px;
     }
 
     .music-widget .music-widget__artist {
-        font-size: 10px;
+        font-size: 9px;
+    }
+
+    .music-widget .music-widget__status {
+        padding-top: 4px;
+    }
+
+    .music-widget .music-widget__live-indicator,
+    .music-widget .music-widget__lastfm-link {
+        font-size: 8px;
     }
 }
 
@@ -211,6 +221,18 @@
 
     /* Keep is-open state for menus */
     .menu-bar__item.is-open {
+        background: var(--pure-black);
+        color: var(--pure-white);
+    }
+
+    /* Dropdown item hover disabled on touch */
+    .menu-dropdown__item:hover {
+        background: transparent;
+        color: var(--pure-black);
+    }
+
+    /* But keep active state for tap feedback */
+    .menu-dropdown__item:active {
         background: var(--pure-black);
         color: var(--pure-white);
     }
