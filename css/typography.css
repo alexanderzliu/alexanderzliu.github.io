@@ -146,3 +146,28 @@
     font-size: 13px;
     line-height: 1.5;
 }
+
+/* ============================================
+   TECH LIST - Terminal-style bullet list
+============================================ */
+
+.window__content ul.tech-list {
+    list-style: none;
+    margin: 12px 0;
+    padding: 0;
+}
+
+.window__content ul.tech-list li {
+    font-family: 'Geneva', 'Chicago', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 4px 0 4px 16px;
+    position: relative;
+}
+
+.window__content ul.tech-list li::before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}

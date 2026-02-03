@@ -241,11 +241,38 @@
             <div class="window__resize"></div>
         </div>
 
-        <!-- Art & Code Window -->
-        <div class="window" id="window-art-code" style="width: 440px; min-height: 300px;">
+        <!-- Art & Code Folder Window -->
+        <div class="window" id="window-art-code" style="width: 400px; min-height: 280px;">
             <div class="window__titlebar">
                 <div class="window__close" data-close></div>
                 <span class="window__title">Art & Code</span>
+                <div class="window__zoom"></div>
+            </div>
+            <div class="window__body">
+                <div class="folder-header">
+                    <span class="folder-header__items">2 items</span>
+                    <span class="folder-header__size">128K available</span>
+                </div>
+                <div class="folder-icons" style="grid-template-columns: repeat(2, 1fr); min-height: 150px;">
+                    <button class="folder-icon" data-window="art-code-manifesto">
+                        <div class="folder-icon__image icon-document"></div>
+                        <span class="folder-icon__label">Manifesto</span>
+                    </button>
+
+                    <button class="folder-icon" data-window="mafia-ace">
+                        <div class="folder-icon__image icon-mafia"></div>
+                        <span class="folder-icon__label">Mafia ACE</span>
+                    </button>
+                </div>
+            </div>
+            <div class="window__resize"></div>
+        </div>
+
+        <!-- Art & Code Manifesto Window -->
+        <div class="window" id="window-art-code-manifesto" style="width: 440px; min-height: 280px;">
+            <div class="window__titlebar">
+                <div class="window__close" data-close></div>
+                <span class="window__title">Manifesto</span>
                 <div class="window__zoom"></div>
             </div>
             <div class="window__body">
@@ -259,6 +286,36 @@
                 <div class="window__status">
                     <span>1 item</span>
                     <span>Thoughts</span>
+                </div>
+            </div>
+            <div class="window__resize"></div>
+        </div>
+
+        <!-- Mafia ACE Project Window -->
+        <div class="window" id="window-mafia-ace" style="width: 460px; min-height: 360px;">
+            <div class="window__titlebar">
+                <div class="window__close" data-close></div>
+                <span class="window__title">Mafia ACE</span>
+                <div class="window__zoom"></div>
+            </div>
+            <div class="window__body">
+                <div class="window__content">
+                    <h1>Mafia ACE</h1>
+                    <p>AI players evolving the metagame of social deduction game Mafia through agentic context engineering.</p>
+                    <div class="divider"></div>
+                    <h3>Tech Stack</h3>
+                    <ul class="tech-list">
+                        <li>Backend: FastAPI with async game orchestration</li>
+                        <li>Frontend: SvelteKit with Art Deco noir aesthetic</li>
+                        <li>LLM Support: OpenAI, Anthropic, Gemini, OpenRouter</li>
+                        <li>Observability: Weave integration for agent trace analysis</li>
+                    </ul>
+                    <div class="divider"></div>
+                    <p><a href="https://github.com/alexanderzliu/weavehacks3" target="_blank">View on GitHub</a></p>
+                </div>
+                <div class="window__status">
+                    <span>1 item</span>
+                    <span>Project</span>
                 </div>
             </div>
             <div class="window__resize"></div>
