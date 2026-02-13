@@ -174,15 +174,6 @@ class GameplayScene extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
         this.physics.world.gravity.y = (typeof data.gravityY === 'number') ? data.gravityY : GRAVITY;
 
-        // Debug: coordinate tracker
-        this.debugCoords = this.add.text(GAME_WIDTH - 10, 16, 'x: 0, y: 0', {
-            fontSize: '16px',
-            fontFamily: 'monospace',
-            color: '#00ff00',
-            stroke: '#000000',
-            strokeThickness: 3
-        }).setOrigin(1, 0).setScrollFactor(0).setDepth(999);
-
         // Ground (invisible floor)
         const groundYWorld = data.groundY * this.artScaleY;
         this.ground = this.physics.add.staticGroup();
@@ -305,17 +296,6 @@ class GameplayScene extends Phaser.Scene {
             this.companion?.update?.();
         }
 
-        // Debug: show mouse coordinates
-        if (this.debugCoords) {
-            const pointer = this.input.activePointer;
-            const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
-            const artX = worldPoint.x / (this.artScaleX || 1);
-            const artY = worldPoint.y / (this.artScaleY || 1);
-            this.debugCoords.setText(
-                `world: ${Math.round(worldPoint.x)}, ${Math.round(worldPoint.y)}\n` +
-                `art: ${Math.round(artX)}, ${Math.round(artY)}`
-            );
-        }
     }
 
     collectHeart(player, heart) {

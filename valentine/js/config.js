@@ -218,7 +218,7 @@ window.addEventListener('load', () => {
             default: 'arcade',
             arcade: {
                 gravity: { y: GRAVITY },
-                debug: true
+                debug: false
             }
         },
         scale: {
