@@ -1,7 +1,8 @@
 class ItemsCounter {
-    constructor(scene) {
+    constructor(scene, total) {
         this.scene = scene;
-        this.count = scene.registry.get('itemsCollected') || 0;
+        this.count = 0;
+        this.total = total || HEARTS_PER_LEVEL;
 
         this.text = scene.add.text(20, 16, this.getLabel(), {
             fontSize: '22px',
@@ -13,12 +14,11 @@ class ItemsCounter {
     }
 
     getLabel() {
-        return '\u2764 ' + this.count + ' / 5';
+        return '\u2764 ' + this.count + ' / ' + this.total;
     }
 
     increment() {
         this.count++;
-        this.scene.registry.set('itemsCollected', this.count);
         this.text.setText(this.getLabel());
 
         // Pop animation

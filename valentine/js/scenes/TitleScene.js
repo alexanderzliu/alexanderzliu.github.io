@@ -3,7 +3,57 @@ class TitleScene extends Phaser.Scene {
         super(SCENES.TITLE);
     }
 
+    getUrlParams() {
+        const search = window.location.search || '';
+        if (search) return new URLSearchParams(search);
+
+        const hash = window.location.hash || '';
+        const qIndex = hash.indexOf('?');
+        if (qIndex >= 0) return new URLSearchParams(hash.slice(qIndex));
+
+        return new URLSearchParams('');
+    }
+
+    resolveSceneParam(value) {
+        if (!value) return null;
+        const v = String(value).trim().toLowerCase();
+        if (!v) return null;
+
+        const map = {
+            '1': SCENES.BERKELEY,
+            berkeley: SCENES.BERKELEY,
+            bk: SCENES.BERKELEY,
+            '2': SCENES.SF,
+            sf: SCENES.SF,
+            sanfrancisco: SCENES.SF,
+            'san-francisco': SCENES.SF,
+            '3': SCENES.JAPAN,
+            japan: SCENES.JAPAN,
+            '4': SCENES.UTAH,
+            utah: SCENES.UTAH,
+            '5': SCENES.SPACE,
+            space: SCENES.SPACE,
+            finale: SCENES.FINALE
+        };
+
+        return map[v] || null;
+    }
+
     create() {
+        // Convenience: allow jumping directly to a scene, e.g. `?edit=1&scene=japan`
+        try {
+            const params = this.getUrlParams();
+            const requested = this.resolveSceneParam(params.get('scene') || params.get('level'));
+            const edit = params.has('edit') && params.get('edit') !== '0';
+            const target = requested || (edit ? SCENES.BERKELEY : null);
+            if (target) {
+                this.scene.start(target);
+                return;
+            }
+        } catch {
+            // ignore
+        }
+
         this.cameras.main.fadeIn(800, 0, 0, 0);
 
         // Background
@@ -29,19 +79,12 @@ class TitleScene extends Phaser.Scene {
         }
 
         // Title
-        this.add.text(GAME_WIDTH / 2, 140, 'Happy Valentine\'s Day', {
+        this.add.text(GAME_WIDTH / 2, 140, 'Bubu and Dudu\'s Great Adventure', {
             fontSize: '44px',
             fontFamily: 'Caveat, cursive',
             color: '#ff6b8a',
             stroke: '#2d0a1a',
             strokeThickness: 4
-        }).setOrigin(0.5);
-
-        // Subtitle
-        this.add.text(GAME_WIDTH / 2, 200, 'A little adventure for us', {
-            fontSize: '22px',
-            fontFamily: 'Caveat, cursive',
-            color: '#ffb8c6'
         }).setOrigin(0.5);
 
         // Start prompt

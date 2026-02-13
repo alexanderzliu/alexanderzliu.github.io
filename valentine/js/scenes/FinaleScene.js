@@ -11,10 +11,10 @@ class FinaleScene extends Phaser.Scene {
 
         // Sequenced romantic messages
         const messages = [
-            { text: 'From Berkeley to the stars...', delay: 1500 },
-            { text: 'Every place we\'ve been together...', delay: 4500 },
-            { text: 'Every memory we\'ve made...', delay: 8000 },
-            { text: 'I\'d choose you every time.', delay: 11500 },
+            { text: 'From Berkeley to the stars', delay: 1500 },
+            { text: 'You\'ll always be in my heart', delay: 4500 },
+            { text: 'All the memories we\'ve made', delay: 8000 },
+            { text: 'A love that will never fade', delay: 11500 },
             { text: 'Happy Valentine\'s Day', delay: 14500, fontSize: '40px', color: '#ff6b8a' },
             { text: 'I love you.', delay: 18000, fontSize: '30px' }
         ];
@@ -57,11 +57,14 @@ class FinaleScene extends Phaser.Scene {
             });
         });
 
-        // Show total items collected
+        // Show total hearts collected
         this.time.delayedCall(21000, () => {
-            const count = this.registry.get('itemsCollected') || 0;
+            const count = this.registry.get('heartsCollected') || 0;
+            const totalHearts = (SCENE_ORDER || [])
+                .filter(k => k !== SCENES.FINALE)
+                .reduce((sum, k) => sum + ((SCENE_DATA_MAP?.[k]?.hearts?.length) || 0), 0);
             const itemText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 50,
-                '\u2764 ' + count + ' / 5 memories collected \u2764', {
+                '\u2764 ' + count + ' / ' + totalHearts + ' hearts collected \u2764', {
                     fontSize: '20px',
                     fontFamily: 'Caveat, cursive',
                     color: '#ffaacc'
@@ -97,7 +100,7 @@ class FinaleScene extends Phaser.Scene {
     }
 
     restart() {
-        this.registry.set('itemsCollected', 0);
+        this.registry.set('heartsCollected', 0);
         this.cameras.main.fadeOut(800, 0, 0, 0);
         this.cameras.main.once('camerafadeoutcomplete', () => {
             this.scene.start(SCENES.TITLE);
