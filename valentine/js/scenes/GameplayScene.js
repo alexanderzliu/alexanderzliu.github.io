@@ -271,13 +271,18 @@ class GameplayScene extends Phaser.Scene {
 
         // Hint text for first scene
         if (this.scene.key === SCENES.BERKELEY) {
-            const hint = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 30,
-                'Arrow keys / WASD to move, Space / Up to jump', {
-                    fontSize: '14px',
-                    fontFamily: 'Caveat, cursive',
-                    color: '#ffffff',
-                    alpha: 0.6
-                }).setOrigin(0.5).setScrollFactor(0).setDepth(100);
+            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            const hintMessage = isTouchDevice
+                ? 'Use buttons to move and jump'
+                : 'Arrow keys / WASD to move, Space / Up to jump';
+            const hintY = isTouchDevice ? GAME_HEIGHT - 65 : GAME_HEIGHT - 30;
+
+            const hint = this.add.text(GAME_WIDTH / 2, hintY, hintMessage, {
+                fontSize: '14px',
+                fontFamily: 'Caveat, cursive',
+                color: '#ffffff',
+                alpha: 0.6
+            }).setOrigin(0.5).setScrollFactor(0).setDepth(100);
 
             this.tweens.add({
                 targets: hint,
@@ -292,10 +297,10 @@ class GameplayScene extends Phaser.Scene {
         if (!this.editMode && (this.transitioning || this.inputPaused)) return;
 
         if (!this.editMode) {
+            this.touchControls?.update(this.player);
             this.player?.update?.();
             this.companion?.update?.();
         }
-
     }
 
     collectHeart(player, heart) {
@@ -320,6 +325,7 @@ class GameplayScene extends Phaser.Scene {
         // Check if all hearts collected
         if (this.heartsCollectedThisLevel >= this.totalHeartsThisLevel) {
             this.inputPaused = true;
+            this.touchControls?.setVisible(false);
             this.player.setVelocityX(0);
             this.player.setVelocityY(0);
 
@@ -337,27 +343,10 @@ class GameplayScene extends Phaser.Scene {
     }
 
     setupTouchControls() {
-        // Left third = move left, right third = move right, top area = jump
-        const leftZone = this.add.zone(0, GAME_HEIGHT * 0.3, GAME_WIDTH * 0.35, GAME_HEIGHT * 0.7)
-            .setOrigin(0, 0).setInteractive().setScrollFactor(0).setDepth(300);
-        const rightZone = this.add.zone(GAME_WIDTH * 0.65, GAME_HEIGHT * 0.3, GAME_WIDTH * 0.35, GAME_HEIGHT * 0.7)
-            .setOrigin(0, 0).setInteractive().setScrollFactor(0).setDepth(300);
+        this.touchControls = new TouchControls(this);
 
-        leftZone.on('pointerdown', () => { this.player.touchLeft = true; });
-        leftZone.on('pointerup', () => { this.player.touchLeft = false; });
-        leftZone.on('pointerout', () => { this.player.touchLeft = false; });
-
-        rightZone.on('pointerdown', () => { this.player.touchRight = true; });
-        rightZone.on('pointerup', () => { this.player.touchRight = false; });
-        rightZone.on('pointerout', () => { this.player.touchRight = false; });
-
-        // Tap top portion to jump
-        const jumpZone = this.add.zone(0, 0, GAME_WIDTH, GAME_HEIGHT * 0.3)
-            .setOrigin(0, 0).setInteractive().setScrollFactor(0).setDepth(300);
-
-        jumpZone.on('pointerdown', () => {
-            this.player.touchJump = true;
-            this.time.delayedCall(200, () => { this.player.touchJump = false; });
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.touchControls?.destroy();
         });
     }
 }
