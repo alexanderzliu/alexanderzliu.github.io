@@ -250,10 +250,10 @@
             </div>
             <div class="window__body">
                 <div class="folder-header">
-                    <span class="folder-header__items">2 items</span>
+                    <span class="folder-header__items">3 items</span>
                     <span class="folder-header__size">128K available</span>
                 </div>
-                <div class="folder-icons" style="grid-template-columns: repeat(2, 1fr); min-height: 150px;">
+                <div class="folder-icons" style="grid-template-columns: repeat(3, 1fr); min-height: 150px;">
                     <button class="folder-icon" data-window="art-code-manifesto">
                         <div class="folder-icon__image icon-document"></div>
                         <span class="folder-icon__label">Manifesto</span>
@@ -262,6 +262,11 @@
                     <button class="folder-icon" data-window="mafia-ace">
                         <div class="folder-icon__image icon-mafia"></div>
                         <span class="folder-icon__label">Mafia ACE</span>
+                    </button>
+
+                    <button class="folder-icon" data-window="crimson">
+                        <div class="folder-icon__image icon-crimson"></div>
+                        <span class="folder-icon__label">Crimson</span>
                     </button>
                 </div>
             </div>
@@ -312,6 +317,37 @@
                     </ul>
                     <div class="divider"></div>
                     <p><a href="https://github.com/alexanderzliu/weavehacks3" target="_blank">View on GitHub</a></p>
+                </div>
+                <div class="window__status">
+                    <span>1 item</span>
+                    <span>Project</span>
+                </div>
+            </div>
+            <div class="window__resize"></div>
+        </div>
+
+        <!-- Crimson Project Window -->
+        <div class="window" id="window-crimson" style="width: 460px; min-height: 360px;">
+            <div class="window__titlebar">
+                <div class="window__close" data-close></div>
+                <span class="window__title">Crimson</span>
+                <div class="window__zoom"></div>
+            </div>
+            <div class="window__body">
+                <div class="window__content">
+                    <h1>Crimson</h1>
+                    <div class="award-badge">&#9733; Winner &mdash; AWS x Datadog LLM Observability Hackathon</div>
+                    <p>An automated red-teaming agent that probes AI systems for prompt injection vulnerabilities through multi-stage reconnaissance, attack planning, and adversarial testing.</p>
+                    <div class="divider"></div>
+                    <h3>Tech Stack</h3>
+                    <ul class="tech-list">
+                        <li>Agents: AWS Strands Agents SDK with 4-stage pipeline</li>
+                        <li>Graph: Neo4j knowledge graph for architecture mapping</li>
+                        <li>Inference: Amazon Bedrock</li>
+                        <li>Observability: Datadog LLM Observability for full trace analysis</li>
+                    </ul>
+                    <div class="divider"></div>
+                    <p><a href="https://github.com/alexanderzliu/aws-dd-hackathon" target="_blank">View on GitHub</a></p>
                 </div>
                 <div class="window__status">
                     <span>1 item</span>
