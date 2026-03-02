@@ -4,17 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Happy Valentine's Day</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
 </head>
 <body>
     <div id="game-container"></div>
 
+    <div id="rotate-prompt">
+        <p style="font-size: 48px;">&#x1F504;</p>
+        <p>Please rotate your device to landscape</p>
+    </div>
+
     <!-- UI utilities -->
     <script src="js/ui/TransitionFX.js"></script>
     <script src="js/ui/ItemsCounter.js"></script>
     <script src="js/ui/LetterPanel.js"></script>
     <script src="js/ui/TextOverlay.js"></script>
+    <script src="js/ui/TouchControls.js"></script>
 
     <!-- Game objects -->
     <script src="js/objects/Player.js"></script>

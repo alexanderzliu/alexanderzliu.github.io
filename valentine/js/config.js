@@ -214,6 +214,9 @@ window.addEventListener('load', () => {
         width: GAME_WIDTH,
         height: GAME_HEIGHT,
         pixelArt: true,
+        input: {
+            activePointers: 2
+        },
         physics: {
             default: 'arcade',
             arcade: {

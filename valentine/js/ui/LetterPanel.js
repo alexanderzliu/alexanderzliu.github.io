@@ -5,6 +5,13 @@ class LetterPanel {
     }
 
     show(itemName, message, onDismiss) {
+        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        const panelW = isTouchDevice ? 650 : 500;
+        const panelH = isTouchDevice ? 340 : 280;
+        const headerSize = isTouchDevice ? '32px' : '28px';
+        const bodySize = isTouchDevice ? '22px' : '18px';
+        const wrapWidth = panelW - 60;
+
         // Dark overlay
         const overlay = this.scene.add.rectangle(
             GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.6
@@ -13,15 +20,15 @@ class LetterPanel {
 
         // Paper background — slightly rotated for handwritten feel
         const paper = this.scene.add.rectangle(
-            GAME_WIDTH / 2, GAME_HEIGHT / 2, 500, 280, 0xfff8ed, 1
+            GAME_WIDTH / 2, GAME_HEIGHT / 2, panelW, panelH, 0xfff8ed, 1
         ).setDepth(201).setScrollFactor(0).setAlpha(0);
         paper.setStrokeStyle(2, 0xd4c5a9);
         paper.rotation = Phaser.Math.DegToRad(Phaser.Math.Between(-1, 2));
         this.elements.push(paper);
 
         // Item name header
-        const header = this.scene.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 100, itemName, {
-            fontSize: '28px',
+        const header = this.scene.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - panelH / 2 + 35, itemName, {
+            fontSize: headerSize,
             fontFamily: 'Caveat, cursive',
             color: '#ff6b8a'
         }).setOrigin(0.5).setDepth(202).setScrollFactor(0).setAlpha(0);
@@ -29,17 +36,17 @@ class LetterPanel {
 
         // Message body
         const body = this.scene.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2, message, {
-            fontSize: '18px',
+            fontSize: bodySize,
             fontFamily: 'Caveat, cursive',
             color: '#4a3728',
-            wordWrap: { width: 440 },
+            wordWrap: { width: wrapWidth },
             lineSpacing: 6,
             align: 'center'
         }).setOrigin(0.5).setDepth(202).setScrollFactor(0).setAlpha(0);
         this.elements.push(body);
 
         // "tap to continue" prompt
-        const prompt = this.scene.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 120, 'tap to continue', {
+        const prompt = this.scene.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + panelH / 2 - 20, 'tap to continue', {
             fontSize: '14px',
             fontFamily: 'Caveat, cursive',
             color: '#999'
