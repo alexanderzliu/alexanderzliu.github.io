@@ -119,7 +119,7 @@
                         <span class="folder-icon__label">Art & Code</span>
                     </button>
 
-                    <a class="folder-icon" href="aliu%20Resume%20Jan%202026.pdf" target="_blank">
+                    <a class="folder-icon" href="Alexander_Liu_Temporal.pdf" target="_blank">
                         <div class="folder-icon__image icon-document"></div>
                         <span class="folder-icon__label">Resume</span>
                     </a>
@@ -250,10 +250,10 @@
             </div>
             <div class="window__body">
                 <div class="folder-header">
-                    <span class="folder-header__items">3 items</span>
+                    <span class="folder-header__items">4 items</span>
                     <span class="folder-header__size">128K available</span>
                 </div>
-                <div class="folder-icons" style="grid-template-columns: repeat(3, 1fr); min-height: 150px;">
+                <div class="folder-icons" style="grid-template-columns: repeat(4, 1fr); min-height: 150px;">
                     <button class="folder-icon" data-window="art-code-manifesto">
                         <div class="folder-icon__image icon-document"></div>
                         <span class="folder-icon__label">Manifesto</span>
@@ -267,6 +267,11 @@
                     <button class="folder-icon" data-window="crimson">
                         <div class="folder-icon__image icon-crimson"></div>
                         <span class="folder-icon__label">Crimson</span>
+                    </button>
+
+                    <button class="folder-icon" data-window="pokeagent">
+                        <div class="folder-icon__image icon-pokeagent"></div>
+                        <span class="folder-icon__label">Pok&eacute;Agent</span>
                     </button>
                 </div>
             </div>
@@ -348,6 +353,37 @@
                     </ul>
                     <div class="divider"></div>
                     <p><a href="https://github.com/alexanderzliu/aws-dd-hackathon" target="_blank">View on GitHub</a></p>
+                </div>
+                <div class="window__status">
+                    <span>1 item</span>
+                    <span>Project</span>
+                </div>
+            </div>
+            <div class="window__resize"></div>
+        </div>
+
+        <!-- PokeAgent Project Window -->
+        <div class="window" id="window-pokeagent" style="width: 460px; min-height: 360px;">
+            <div class="window__titlebar">
+                <div class="window__close" data-close></div>
+                <span class="window__title">Pok&eacute;Agent</span>
+                <div class="window__zoom"></div>
+            </div>
+            <div class="window__body">
+                <div class="window__content">
+                    <h1>Pok&eacute;mon Agent Harness + Eval Suite</h1>
+                    <p>Evals and a durable agent harness for a Pok&eacute;mon Red&ndash;playing agent &mdash; swap prompt/state/memory strategy and measure deltas in steps, tokens, and cost.</p>
+                    <div class="divider"></div>
+                    <h3>Tech Stack</h3>
+                    <ul class="tech-list">
+                        <li>Orchestration: Temporal workflows with durable retries and parallel fan-out across (scenario &times; harness &times; trial)</li>
+                        <li>Agent-driven emulator loop driving Pok&eacute;mon Red via tool calls</li>
+                        <li>Environment: Pok&eacute;mon Red (forked from the claude-plays-pokemon starter)</li>
+                        <li>Eval: per-trial metrics on steps-to-milestone, model calls, tokens, and dollars spent</li>
+                        <li>Language: Python</li>
+                    </ul>
+                    <div class="divider"></div>
+                    <p><a href="https://github.com/alexanderzliu/porygon" target="_blank">View on GitHub</a></p>
                 </div>
                 <div class="window__status">
                     <span>1 item</span>
